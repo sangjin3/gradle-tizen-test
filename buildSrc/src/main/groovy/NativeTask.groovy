@@ -1,7 +1,8 @@
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
-class TizenTestTask extends DefaultTask {
+class NativeTask extends DefaultTask {
     def test_name;
     def list;
 

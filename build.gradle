@@ -1,12 +1,14 @@
 
-task list_native_project(type: TizenTestTask) {
+task list_native_project(type: NativeTask) {
     list = "list native-project";
 }
 
-task list_web_project(type: TizenTestTask, dependsOn: list_native_project) {
-    list = "list web-project";
+task nativeTest(type: NativeTask, dependsOn: list_native_project) {
+    test_name = 'tizen sdk cli test for native app'
 }
 
-task native_test(type: TizenTestTask, dependsOn: list_web_project) {
-    test_name = 'native_test'
+task webTest(type: WebTask) {
+    test_name = 'tizen sdk cli test for web app'
+    sdk_path = "/home/dkyun77/tizen-sdk"
+    profile = "mobile"
 }
