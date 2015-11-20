@@ -1,0 +1,12 @@
+
+task list_native_project(type: TizenTestTask) {
+    list = "list native-project";
+}
+
+task list_web_project(type: TizenTestTask, dependsOn: list_native_project) {
+    list = "list web-project";
+}
+
+task native_test(type: TizenTestTask, dependsOn: list_web_project) {
+    test_name = 'native_test'
+}
