@@ -1,14 +1,24 @@
 
-task list_native_project(type: NativeTask) {
-    list = "list native-project";
+// for Windows
+//def sdk_install_path = "C:/tizen-sdk"
+
+// for Ubuntu, Mac
+def env = System.getenv();
+def myHome= env['HOME'];
+def sdk_install_path = "${myHome}/tizen-sdk"
+
+task certTest(type: CertTask) {
+    test_name = 'tizen sdk cli test for certificate'
+    sdk_path = "${sdk_install_path}"
 }
 
-task nativeTest(type: NativeTask, dependsOn: list_native_project) {
+task nativeTest(type: NativeTask) {
     test_name = 'tizen sdk cli test for native app'
 }
 
-task webTest(type: WebTask) {
+task webTest(type: WebTask, dependsOn: certTest) {
     test_name = 'tizen sdk cli test for web app'
-    sdk_path = "/home/dkyun77/tizen-sdk"
+    sdk_path = "${sdk_install_path}"
     profile = "mobile"
 }
+

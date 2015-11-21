@@ -3,57 +3,34 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import static groovy.io.FileType.FILES
 
+import Util
+
 class App {
-    def sdk_path;
-    def Platform;
-    def Template;
-    def Name;
-    def tizen_cmd;
-    def pwd;
-    def sout = new StringBuilder();
-    def serr = new StringBuilder();
+    private String Platform;
+    private String Template;
+    private String Name;
+    private String pwd;
 
-    App(arg1, arg2, arg3, arg4){
-        sdk_path = arg1;
-        Platform = arg2;
-        Template = arg3;
-        Name = arg4;
+    App(arg1, arg2, arg3){
+        Platform = arg1; Template = arg2; Name = arg3;
 
-        tizen_cmd = "${sdk_path}/tools/ide/bin/tizen";
         File dir = new File (".");
         pwd = dir.getCanonicalPath();
     }
 
-    def exec_cmd(test, args){
-        def command = "${tizen_cmd} ${args}";
-
-        def proc = command.split().toList().execute();
-        proc.consumeProcessOutput(sout, serr);
-        proc.waitFor();
-
-        if( proc.exitValue() == 0 ){
-            println ("       Success: ${test}");
-        }else{
-            println ("       Fail   : ${test}");
-            println ("$sout"); println ("$serr");
-        }
-
-        sout.delete(0, sout.length()); serr.delete(0, serr.length()); 
-    }
-
     def createTest(){
         def args = "create web-project -p ${Platform} -t ${Template} -n ${Name} -- ${pwd}/${Platform}";
-        exec_cmd("create", args);
+        Util.tizen_cmd("create", args, 0);
     }
 
     def buildTest(){
         def args = "build-web -- ${pwd}/${Platform}/${Name}";
-        exec_cmd("build", args);
+        Util.tizen_cmd("build", args, 0);
     }
 
     def packageTest(){
         def args = "package --type wgt --sign test_alias -- ${pwd}/${Platform}/${Name}/.buildResult";
-        exec_cmd("package", args);
+        Util.tizen_cmd("package", args, 0);
     }
 
     def checkWgt(){
@@ -72,25 +49,18 @@ class App {
 }
 
 class WebTest {
-    def sdk_path;
-    def profile;
-    ArrayList<App> AppList;
+    public static ArrayList<App> AppList;
 
-    WebTest(arg1, arg2){
-        sdk_path = arg1; profile = arg2;
-    }
-
-    def listTest() {
+    public static void listTest(arg1) {
         def Platform;
         def Template;
         def Name;
         def sout = new StringBuilder();
         def serr = new StringBuilder();
         AppList = new ArrayList<App>();
+        def profile = arg1;
 
-        def tizen_cmd = "${sdk_path}/tools/ide/bin/tizen";
-
-        def proc = ["${tizen_cmd}", "list", "web-project"].execute();
+        def proc = ["${Util.tizen_cmd}", "list", "web-project"].execute();
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
 
@@ -109,11 +79,10 @@ class WebTest {
                 Name = splited[1].replaceAll('_','');
                 Name = Name.replaceAll('-','');
 
-                def app = new App(sdk_path, Platform, Template, Name);
+                def app = new App(Platform, Template, Name);
                 AppList.add(app);
             }
         }
-
     }
 }
 
@@ -127,13 +96,18 @@ class WebTask extends DefaultTask {
             int i = 0;
             int total = 0;
 
-            logger.info("${test_name}: ${profile}: ${sdk_path}");
+            println("=====================================");
+            println("${test_name}");
+            println("profile: ${profile}");
+            println("sdk path: ${sdk_path}");
+            println("-------------------------------------");
 
-            def web = new WebTest(sdk_path, profile);
-            web.listTest();
+            Util.init(sdk_path);
+
+            WebTest.listTest(profile);
 
             i = 0;
-            web.AppList.each {
+            WebTest.AppList.each {
                 println(++i + " " + it.Name );
                 it.createTest();
                 it.buildTest();
@@ -141,7 +115,7 @@ class WebTask extends DefaultTask {
                 it.checkWgt();
             }
             total = i;
-            println("Total template number: " + total);
+            //println("Total template number: " + total);
         }
 }
 
