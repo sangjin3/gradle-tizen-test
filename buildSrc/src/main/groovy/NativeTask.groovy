@@ -1,27 +1,137 @@
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import static groovy.io.FileType.FILES
+
+import Util
+
+class NativeApp {
+    private String Platform;
+    private String Template;
+    private String Name;
+    private String pwd;
+
+    NativeApp(arg1, arg2, arg3){
+        Platform = arg1; Template = arg2; Name = arg3;
+
+        File dir = new File (".");
+        pwd = dir.getCanonicalPath();
+    }
+
+    def createTest(arch, compiler, configuration){
+        def args = "create native-project ";
+        args += "-p ${Platform} ";
+        args += "-t ${Template} ";
+        args += "-n ${Name} ";
+        args += "-- ${pwd}/${Platform}_${arch}_${compiler}_${configuration}";
+        Util.tizen_cmd("create", args, 0);
+
+        File f = new File("${pwd}/${Platform}_${arch}_${compiler}_${configuration}/${Name}/Build");
+        assert ( f.exists() );
+    }
+
+    def buildTest(arch, compiler, configuration){
+        def args = "build-native ";
+        args += "--arch ${arch} ";
+        args += "--compiler ${compiler} ";
+        args += "--configuration ${configuration} ";
+        args += "-- ${pwd}/${Platform}_${arch}_${compiler}_${configuration}/${Name}";
+        Util.tizen_cmd("build", args, 0);
+    }
+
+    def packageTest(arch, compiler, configuration){
+        def args = "package ";
+        args += "--type tpk "; 
+        args += "--sign test_alias ";
+        args += "-- ${pwd}/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
+        Util.tizen_cmd("package", args, 0);
+    }
+
+    def checkTpk(arch, compiler, configuration){
+        int success = 0;
+
+        new File("${pwd}/${Platform}_${arch}_${compiler}_${configuration}/${Name}").eachFileRecurse(FILES) {
+            if( it.name.endsWith('.so') ||  it.name.endsWith('.a')
+                    ||  it.name.endsWith('.tpk') ){
+                println ("       Success: $it.name");
+                success = 1;
+            }
+        }
+
+        if (success == 0 ){
+            println ("       Fail: ${it.name}");
+        }
+    }
+}
+
+class NativeTest {
+    public static ArrayList<NativeApp> AppList;
+
+    public static void listTest(arg1) {
+        def Platform;
+        def Template;
+        def Name;
+        def sout = new StringBuilder();
+        def serr = new StringBuilder();
+        AppList = new ArrayList<NativeApp>();
+        def profile = arg1;
+
+        def proc = ["${Util.tizen_cmd}", "list", "native-project"].execute();
+        proc.consumeProcessOutput(sout, serr);
+        proc.waitFor();
+
+        if( proc.exitValue() == 0 ){
+            println ("Success: list");
+        }else{
+            println ("Fail   : list");
+            println ("$sout"); println ("$serr");
+        }
+
+        sout.eachLine { line, count ->
+            if ( line.contains("${profile}") ){
+                String[] splited = line.split("\\s+");
+                Platform = splited[0];
+                Template = splited[1];
+                Name = splited[1].replaceAll('_','');
+                Name = Name.replaceAll('-','');
+
+                def app = new NativeApp(Platform, Template, Name);
+                AppList.add(app);
+            }
+        }
+    }
+}
 
 class NativeTask extends DefaultTask {
     def test_name;
-    def list;
+    def sdk_path;
+    def profile;
 
     @TaskAction
         def test() {
-            def cmd;
-            cmd = "/home/dkyun77/tizen-sdk/tools/ide/bin/tizen ";
-            project.exec {
+            int i = 0;
+            int total = 0;
 
-                ignoreExitValue true;
+            println("=====================================");
+            println("${test_name}");
+            println("profile: ${profile}");
+            println("sdk path: ${sdk_path}");
+            println("-------------------------------------");
 
-                logger.info("cmd: " + cmd.split().toList());
-                logger.info("args: " + list);
+            Util.init(sdk_path);
 
-                if(list) {
-                    commandLine = cmd.split().toList() + list.split().toList()
-                } else {
-                    commandLine = cmd.split().toList() 
-                }
+            NativeTest.listTest(profile);
+
+            i = 0;
+            NativeTest.AppList.each {
+                println(++i + " " + it.Name );
+                it.createTest("x86","gcc","Debug");
+                it.buildTest("x86","gcc","Debug");
+                it.packageTest("x86","gcc","Debug");
+                it.checkTpk("x86","gcc","Debug");
             }
+            total = i;
+            //println("Total template number: " + total);
         }
 }
+

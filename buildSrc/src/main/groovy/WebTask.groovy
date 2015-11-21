@@ -5,13 +5,13 @@ import static groovy.io.FileType.FILES
 
 import Util
 
-class App {
+class WebApp {
     private String Platform;
     private String Template;
     private String Name;
     private String pwd;
 
-    App(arg1, arg2, arg3){
+    WebApp(arg1, arg2, arg3){
         Platform = arg1; Template = arg2; Name = arg3;
 
         File dir = new File (".");
@@ -19,17 +19,25 @@ class App {
     }
 
     def createTest(){
-        def args = "create web-project -p ${Platform} -t ${Template} -n ${Name} -- ${pwd}/${Platform}";
+        def args = "create web-project ";
+        args += "-p ${Platform} ";
+        args += "-t ${Template} ";
+        args += "-n ${Name} ";
+        args += "-- ${pwd}/${Platform}";
         Util.tizen_cmd("create", args, 0);
     }
 
     def buildTest(){
-        def args = "build-web -- ${pwd}/${Platform}/${Name}";
+        def args = "build-web ";
+        args += "-- ${pwd}/${Platform}/${Name}";
         Util.tizen_cmd("build", args, 0);
     }
 
     def packageTest(){
-        def args = "package --type wgt --sign test_alias -- ${pwd}/${Platform}/${Name}/.buildResult";
+        def args = "package ";
+        args += "--type wgt ";
+        args += "--sign test_alias  ";
+        args += "-- ${pwd}/${Platform}/${Name}/.buildResult";
         Util.tizen_cmd("package", args, 0);
     }
 
@@ -49,7 +57,7 @@ class App {
 }
 
 class WebTest {
-    public static ArrayList<App> AppList;
+    public static ArrayList<WebApp> AppList;
 
     public static void listTest(arg1) {
         def Platform;
@@ -57,7 +65,7 @@ class WebTest {
         def Name;
         def sout = new StringBuilder();
         def serr = new StringBuilder();
-        AppList = new ArrayList<App>();
+        AppList = new ArrayList<WebApp>();
         def profile = arg1;
 
         def proc = ["${Util.tizen_cmd}", "list", "web-project"].execute();
@@ -79,7 +87,7 @@ class WebTest {
                 Name = splited[1].replaceAll('_','');
                 Name = Name.replaceAll('-','');
 
-                def app = new App(Platform, Template, Name);
+                def app = new WebApp(Platform, Template, Name);
                 AppList.add(app);
             }
         }

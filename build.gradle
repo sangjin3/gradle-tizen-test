@@ -12,8 +12,10 @@ task certTest(type: CertTask) {
     sdk_path = "${sdk_install_path}"
 }
 
-task nativeTest(type: NativeTask) {
+task nativeTest(type: NativeTask, dependsOn: certTest) {
     test_name = 'tizen sdk cli test for native app'
+    sdk_path = "${sdk_install_path}"
+    profile = "mobile"
 }
 
 task webTest(type: WebTask, dependsOn: certTest) {
