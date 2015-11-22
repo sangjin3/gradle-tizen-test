@@ -9,13 +9,9 @@ class WebApp {
     private String Platform;
     private String Template;
     private String Name;
-    private String pwd;
 
     WebApp(arg1, arg2, arg3){
         Platform = arg1; Template = arg2; Name = arg3;
-
-        File dir = new File (".");
-        pwd = dir.getCanonicalPath();
     }
 
     def createTest(){
@@ -23,13 +19,13 @@ class WebApp {
         args += "-p ${Platform} ";
         args += "-t ${Template} ";
         args += "-n ${Name} ";
-        args += "-- ${pwd}/${Platform}";
+        args += "-- ${Util.pwd}/out/${Platform}";
         Util.tizen_cmd("create", args, 0);
     }
 
     def buildTest(){
         def args = "build-web ";
-        args += "-- ${pwd}/${Platform}/${Name}";
+        args += "-- ${Util.pwd}/out/${Platform}/${Name}";
         Util.tizen_cmd("build", args, 0);
     }
 
@@ -37,14 +33,14 @@ class WebApp {
         def args = "package ";
         args += "--type wgt ";
         args += "--sign test_alias  ";
-        args += "-- ${pwd}/${Platform}/${Name}/.buildResult";
+        args += "-- ${Util.pwd}/out/${Platform}/${Name}/.buildResult";
         Util.tizen_cmd("package", args, 0);
     }
 
     def checkWgt(){
         int success = 0;
 
-        new File("${pwd}/${Platform}/${Name}").eachFileRecurse(FILES) {
+        new File("${Util.pwd}/out/${Platform}/${Name}").eachFileRecurse(FILES) {
             if( it.name.endsWith('.wgt') ){
                 println ("       Success: ${Name}.wgt");
                 success = 1;
@@ -117,6 +113,7 @@ class WebTask extends DefaultTask {
             i = 0;
             WebTest.AppList.each {
                 println(++i + " " + it.Name );
+                println ("   TC Path: [${Util.pwd}/out/$it.Platform]");
                 it.createTest();
                 it.buildTest();
                 it.packageTest();

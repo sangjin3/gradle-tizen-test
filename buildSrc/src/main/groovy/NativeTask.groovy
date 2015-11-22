@@ -9,13 +9,9 @@ class NativeApp {
     private String Platform;
     private String Template;
     private String Name;
-    private String pwd;
 
     NativeApp(arg1, arg2, arg3){
         Platform = arg1; Template = arg2; Name = arg3;
-
-        File dir = new File (".");
-        pwd = dir.getCanonicalPath();
     }
 
     def createTest(arch, compiler, configuration){
@@ -23,10 +19,10 @@ class NativeApp {
         args += "-p ${Platform} ";
         args += "-t ${Template} ";
         args += "-n ${Name} ";
-        args += "-- ${pwd}/${Platform}_${arch}_${compiler}_${configuration}";
+        args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}";
         Util.tizen_cmd("create", args, 0);
 
-        File f = new File("${pwd}/${Platform}_${arch}_${compiler}_${configuration}/${Name}/Build");
+        File f = new File("${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/Build");
         assert ( f.exists() );
     }
 
@@ -35,7 +31,7 @@ class NativeApp {
         args += "--arch ${arch} ";
         args += "--compiler ${compiler} ";
         args += "--configuration ${configuration} ";
-        args += "-- ${pwd}/${Platform}_${arch}_${compiler}_${configuration}/${Name}";
+        args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}";
         Util.tizen_cmd("build", args, 0);
     }
 
@@ -43,14 +39,14 @@ class NativeApp {
         def args = "package ";
         args += "--type tpk "; 
         args += "--sign test_alias ";
-        args += "-- ${pwd}/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
+        args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
         Util.tizen_cmd("package", args, 0);
     }
 
     def checkTpk(arch, compiler, configuration){
         int success = 0;
 
-        new File("${pwd}/${Platform}_${arch}_${compiler}_${configuration}/${Name}").eachFileRecurse(FILES) {
+        new File("${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}").eachFileRecurse(FILES) {
             if( it.name.endsWith('.so') ||  it.name.endsWith('.a')
                     ||  it.name.endsWith('.tpk') ){
                 println ("       Success: $it.name");
@@ -125,10 +121,25 @@ class NativeTask extends DefaultTask {
             i = 0;
             NativeTest.AppList.each {
                 println(++i + " " + it.Name );
-                it.createTest("x86","gcc","Debug");
-                it.buildTest("x86","gcc","Debug");
-                it.packageTest("x86","gcc","Debug");
-                it.checkTpk("x86","gcc","Debug");
+                /*
+                   println ("   TC: $it.Platform, $arch, $compiler, $configuration");
+                   it.createTest("x86","gcc","Debug");
+                   it.buildTest("x86","gcc","Debug");
+                   it.packageTest("x86","gcc","Debug");
+                   it.checkTpk("x86","gcc","Debug");
+                 */
+
+                ['x86', 'arm'].each { arch ->
+                    ['gcc', 'llvm'].each { compiler->
+                        ['Debug', 'Release'].each { configuration->
+                            println ("   TC Path: [${Util.pwd}/out/${it.Platform}_${arch}_${compiler}_${configuration}]");
+                            it.createTest  ("${arch}","${compiler}","${configuration}");
+                            it.buildTest   ("${arch}","${compiler}","${configuration}");
+                            it.packageTest ("${arch}","${compiler}","${configuration}");
+                            it.checkTpk    ("${arch}","${compiler}","${configuration}");
+                        }
+                    }
+                }
             }
             total = i;
             //println("Total template number: " + total);

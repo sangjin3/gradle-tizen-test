@@ -9,12 +9,16 @@ class Util {
     public static String sdk_path;
     public static String tizen_cmd;
     public static String sdb_cmd;
+    public static String pwd;
 
     private static StringBuilder sout = new StringBuilder();
     private static StringBuilder serr = new StringBuilder();
 
     public static void init(arg1){
         sdk_path = arg1;
+
+        File dir = new File (".");
+        pwd = dir.getCanonicalPath();
 
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             hostos = "win";
