@@ -24,3 +24,7 @@ task webTest(type: WebTask, dependsOn: certTest) {
     profile = "mobile"
 }
 
+task sdbTest(type: SDBTask) {
+    test_name = 'tizen sdk sdb test'
+    sdk_path = "${sdk_install_path}"
+}

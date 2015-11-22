@@ -43,7 +43,7 @@ class Util {
         assert ( sdb_file.exists() );
     }
 
-    public static void tizen_cmd(test, args, OK_EXIT_VALUE, verbose){
+    public static void tizen_exec(test, args, OK_EXIT_VALUE, verbose){
         String command = "${tizen_cmd} ${args}";
 
         def proc = command.split().toList().execute();
@@ -56,14 +56,15 @@ class Util {
                 println ("$sout"); println ("$serr");
             }
         }else{
-            println ("       Fail   : ${test}");
+
+            println ("       Fail   : ${test} with exit value: " + proc.exitValue());
             println ("$sout"); println ("$serr");
         }
 
         sout.delete(0, sout.length()); serr.delete(0, serr.length()); 
     }
 
-    public static void sdb_cmd(test, args, OK_EXIT_VALUE, verbose){
+    public static void sdb_exec(test, args, OK_EXIT_VALUE, verbose){
         String command = "${sdb_cmd} ${args}";
 
         def proc = command.split().toList().execute();
@@ -76,7 +77,34 @@ class Util {
                 println ("$sout"); println ("$serr");
             }
         }else{
-            println ("       Fail   : ${test}");
+            println ("       Fail   : ${test} with exit value: " + proc.exitValue());
+            println ("$sout"); println ("$serr");
+        }
+
+        sout.delete(0, sout.length()); serr.delete(0, serr.length()); 
+    }
+
+    public static void sdb_exec_verify(test, args, OK_EXIT_VALUE, OK_STR, verbose){
+        String command = "${sdb_cmd} ${args}";
+        int success = 0;
+
+        def proc = command.split().toList().execute();
+        proc.consumeProcessOutput(sout, serr);
+        proc.waitFor();
+
+        sout.eachLine { line, count ->
+            if ( line.contains("$OK_STR") ){
+                success = 1;
+            }
+        }
+
+        if( success && (proc.exitValue() == OK_EXIT_VALUE) ){
+            println ("       Success: ${test}");
+            if(verbose){
+                println ("$sout"); println ("$serr");
+            }
+        }else{
+            println ("       Fail   : ${test} with exit value: " + proc.exitValue());
             println ("$sout"); println ("$serr");
         }
 
