@@ -43,14 +43,14 @@ class Util {
         assert ( sdb_file.exists() );
     }
 
-    public static void tizen_cmd(test, args, verbose){
+    public static void tizen_cmd(test, args, OK_EXIT_VALUE, verbose){
         String command = "${tizen_cmd} ${args}";
 
         def proc = command.split().toList().execute();
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
 
-        if( proc.exitValue() == 0 ){
+        if( proc.exitValue() == OK_EXIT_VALUE ){
             println ("       Success: ${test}");
             if(verbose){
                 println ("$sout"); println ("$serr");
@@ -63,14 +63,14 @@ class Util {
         sout.delete(0, sout.length()); serr.delete(0, serr.length()); 
     }
 
-    public static void sdb_cmd(test, args, verbose){
+    public static void sdb_cmd(test, args, OK_EXIT_VALUE, verbose){
         String command = "${sdb_cmd} ${args}";
 
         def proc = command.split().toList().execute();
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
 
-        if( proc.exitValue() == 0 ){
+        if( proc.exitValue() == OK_EXIT_VALUE ){
             println ("       Success: ${test}");
             if(verbose){
                 println ("$sout"); println ("$serr");

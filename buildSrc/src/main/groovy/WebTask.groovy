@@ -20,13 +20,13 @@ class WebApp {
         args += "-t ${Template} ";
         args += "-n ${Name} ";
         args += "-- ${Util.pwd}/out/${Platform}";
-        Util.tizen_cmd("create", args, 0);
+        Util.tizen_cmd("create", args, 0, 0);
     }
 
     def buildTest(){
         def args = "build-web ";
         args += "-- ${Util.pwd}/out/${Platform}/${Name}";
-        Util.tizen_cmd("build", args, 0);
+        Util.tizen_cmd("build", args, 0, 0);
     }
 
     def packageTest(){
@@ -34,7 +34,7 @@ class WebApp {
         args += "--type wgt ";
         args += "--sign test_alias  ";
         args += "-- ${Util.pwd}/out/${Platform}/${Name}/.buildResult";
-        Util.tizen_cmd("package", args, 0);
+        Util.tizen_cmd("package", args, 0, 0);
     }
 
     def checkWgt(){

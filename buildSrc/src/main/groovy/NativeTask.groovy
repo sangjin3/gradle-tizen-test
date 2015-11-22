@@ -20,7 +20,7 @@ class NativeApp {
         args += "-t ${Template} ";
         args += "-n ${Name} ";
         args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}";
-        Util.tizen_cmd("create", args, 0);
+        Util.tizen_cmd("create", args, 0, 0);
 
         File f = new File("${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/Build");
         assert ( f.exists() );
@@ -32,7 +32,7 @@ class NativeApp {
         args += "--compiler ${compiler} ";
         args += "--configuration ${configuration} ";
         args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}";
-        Util.tizen_cmd("build", args, 0);
+        Util.tizen_cmd("build", args, 0, 0);
     }
 
     def packageTest(arch, compiler, configuration){
@@ -40,7 +40,7 @@ class NativeApp {
         args += "--type tpk "; 
         args += "--sign test_alias ";
         args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
-        Util.tizen_cmd("package", args, 0);
+        Util.tizen_cmd("package", args, 0, 0);
     }
 
     def checkTpk(arch, compiler, configuration){
