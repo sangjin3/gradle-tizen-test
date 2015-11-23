@@ -1,5 +1,12 @@
 #!/bin/bash
 
-./gradlew native_test
+# same as "./gradlew sT"
+./gradlew sdbTest
+
+./gradlew certTest
+
+./gradlew webTest
+
+./gradlew nativeTest
 
 exit 0

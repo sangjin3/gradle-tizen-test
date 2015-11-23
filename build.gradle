@@ -1,3 +1,12 @@
+apply plugin: 'groovy'
+dependencies {
+    compile gradleApi();
+    compile localGroovy();
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12';
+}
 
 // for Windows
 //def sdk_install_path = "C:/tizen-sdk"
@@ -5,26 +14,26 @@
 // for Ubuntu, Mac
 def env = System.getenv();
 def myHome= env['HOME'];
-def sdk_install_path = "${myHome}/tizen-sdk"
+def sdk_install_path = "${myHome}/tizen-sdk";
 
 task certTest(type: CertTask) {
-    test_name = 'tizen sdk cli test for certificate'
-    sdk_path = "${sdk_install_path}"
+    test_name = 'tizen sdk cli test for certificate';
+    sdk_path = "${sdk_install_path}";
 }
 
 task nativeTest(type: NativeTask, dependsOn: certTest) {
-    test_name = 'tizen sdk cli test for native app'
-    sdk_path = "${sdk_install_path}"
-    profile = "mobile"
+    test_name = 'tizen sdk cli test for native app';
+    sdk_path = "${sdk_install_path}";
+    profile = "mobile";
 }
 
 task webTest(type: WebTask, dependsOn: certTest) {
-    test_name = 'tizen sdk cli test for web app'
-    sdk_path = "${sdk_install_path}"
-    profile = "mobile"
+    test_name = 'tizen sdk cli test for web app';
+    sdk_path = "${sdk_install_path}";
+    profile = "mobile";
 }
 
 task sdbTest(type: SDBTask) {
-    test_name = 'tizen sdk sdb test'
-    sdk_path = "${sdk_install_path}"
+    test_name = 'tizen sdk sdb test';
+    sdk_path = "${sdk_install_path}";
 }

@@ -31,7 +31,11 @@ class sdb_basic{
         Util.sdb_exec("run test", args, 1, 0);
 
         args = "asdf";
-        Util.sdb_exec("test invalid parameter 'asdf'", args, 255, 0);
+        if ( Util.hostos  == "win" ) {
+            Util.sdb_exec("test invalid parameter 'asdf'", args, -1, 0);
+        }else{
+            Util.sdb_exec("test invalid parameter 'asdf'", args, 255, 0);
+        }
 
         args = "help";
         Util.sdb_exec("test help", args, 1, 0);
