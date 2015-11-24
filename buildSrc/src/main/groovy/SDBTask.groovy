@@ -5,25 +5,11 @@ import static groovy.io.FileType.FILES
 
 import Util
 
-class sdb_server{
-    private static String args = "";
-
-    public static void test(){
-        println("SDB server test");
-        println ("   TC:");
-
-        args = "kill-server";
-        Util.sdb_exec("kill-server", args, 0, 0);
-
-        args = "start-server";
-        Util.sdb_exec("start-server", args, 0, 0);
-    }
-}
-
 class sdb_basic{
-    private static String args = "";
 
     public static void test(){
+        String args = "";
+
         println("Basic SDB test");
         println ("   TC:");
 
@@ -45,6 +31,42 @@ class sdb_basic{
     }
 }
 
+class sdb_server{
+
+    public static void test(){
+        String args = "";
+
+        println("SDB server test");
+        println ("   TC:");
+
+        args = "kill-server";
+        Util.sdb_exec("test kill-server", args, 0, 0);
+
+        args = "start-server";
+        Util.sdb_exec("test start-server", args, 0, 0);
+    }
+}
+
+class sdb_state{
+
+    public static void test(){
+        String args = "";
+
+        println("SDB test with device");
+        println ("   TC:");
+
+        args = "get-serialno";
+        Util.sdb_exec("get-serialno", args, 0, 0);
+
+        args = "get-state";
+        Util.sdb_exec("get-state", args, 0, 0);
+
+        args = "get-state";
+        Util.sdb_exec_verify("test get-state with return string", args, 0, "device", 0);
+
+    }
+}
+
 class SDBTask extends DefaultTask {
     def test_name;
     def sdk_path;
@@ -60,6 +82,8 @@ class SDBTask extends DefaultTask {
 
             // test with no emulator/device
             sdb_basic.test();
+            sdb_state.test();
+
             sdb_server.test();
 
             // test with just one emulator or device

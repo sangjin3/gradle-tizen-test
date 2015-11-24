@@ -11,9 +11,6 @@ class Util {
     public static String sdb_cmd;
     public static String pwd;
 
-    private static StringBuilder sout = new StringBuilder();
-    private static StringBuilder serr = new StringBuilder();
-
     public static void init(arg1){
         sdk_path = arg1;
 
@@ -45,70 +42,75 @@ class Util {
 
     public static void tizen_exec(test, args, OK_EXIT_VALUE, verbose){
         String command = "${tizen_cmd} ${args}";
+        int exit;
+        StringBuilder sout = new StringBuilder();
+        StringBuilder serr = new StringBuilder();
 
         def proc = command.split().toList().execute();
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
 
-        if( proc.exitValue() == OK_EXIT_VALUE ){
+        exit = proc.exitValue();
+        if( exit == OK_EXIT_VALUE ){
             println ("       Success: ${test}");
             if(verbose){
                 println ("$sout"); println ("$serr");
             }
         }else{
 
-            println ("       Fail   : ${test} with exit value: " + proc.exitValue());
-            println ("$sout"); println ("$serr");
+            println ("       Fail   : ${test} with exit value: " + exit);
+            println ("stdout: $sout"); println (stderr: "$serr");
         }
-
-        sout.delete(0, sout.length()); serr.delete(0, serr.length()); 
     }
 
     public static void sdb_exec(test, args, OK_EXIT_VALUE, verbose){
         String command = "${sdb_cmd} ${args}";
+        int exit;
+        StringBuilder sout = new StringBuilder();
+        StringBuilder serr = new StringBuilder();
 
         def proc = command.split().toList().execute();
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
 
-        if( proc.exitValue() == OK_EXIT_VALUE ){
+        exit = proc.exitValue();
+        if( exit == OK_EXIT_VALUE ){
             println ("       Success: ${test}");
             if(verbose){
                 println ("$sout"); println ("$serr");
             }
         }else{
-            println ("       Fail   : ${test} with exit value: " + proc.exitValue());
-            println ("$sout"); println ("$serr");
+            println ("       Fail   : ${test} with exit value: " + exit);
+            println ("stdout: $sout"); println (stderr: "$serr");
         }
-
-        sout.delete(0, sout.length()); serr.delete(0, serr.length()); 
     }
 
     public static void sdb_exec_verify(test, args, OK_EXIT_VALUE, OK_STR, verbose){
         String command = "${sdb_cmd} ${args}";
-        int success = 0;
+        int found = 0;
+        int exit;
+        StringBuilder sout = new StringBuilder();
+        StringBuilder serr = new StringBuilder();
 
         def proc = command.split().toList().execute();
-        proc.consumeProcessOutput(sout, serr);
-        proc.waitFor();
+        proc.waitForProcessOutput(sout, serr)
 
         sout.eachLine { line, count ->
             if ( line.contains("$OK_STR") ){
-                success = 1;
+                found = 1;
             }
         }
 
-        if( success && (proc.exitValue() == OK_EXIT_VALUE) ){
+        exit = proc.exitValue();
+        if( found && (exit == OK_EXIT_VALUE) ){
             println ("       Success: ${test}");
             if(verbose){
                 println ("$sout"); println ("$serr");
             }
         }else{
-            println ("       Fail   : ${test} with exit value: " + proc.exitValue());
-            println ("$sout"); println ("$serr");
+            println ("       Fail   : ${test} with exit:" + exit + " found:" + found);
+            println ("stdout: $sout"); println (stderr: "$serr");
         }
-
-        sout.delete(0, sout.length()); serr.delete(0, serr.length()); 
     }
 }
 
