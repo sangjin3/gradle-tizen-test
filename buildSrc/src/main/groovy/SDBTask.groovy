@@ -10,24 +10,24 @@ class sdb_basic{
     public static void test(){
         String args = "";
 
-        println("Basic SDB test");
+        println("Basic test");
         println ("   TC:");
 
         args = "";
-        Util.sdb_exec("run test", args, 1, 0);
+        Util.sdb_exec("test: no arguments", args, 1, 0);
 
         args = "asdf";
         if ( Util.hostos  == "win" ) {
-            Util.sdb_exec("test invalid parameter 'asdf'", args, -1, 0);
+            Util.sdb_exec("test: invalid argument 'asdf'", args, -1, 0);
         }else{
-            Util.sdb_exec("test invalid parameter 'asdf'", args, 255, 0);
+            Util.sdb_exec("test: invalid argument 'asdf'", args, 255, 0);
         }
 
         args = "help";
-        Util.sdb_exec("test help", args, 1, 0);
+        Util.sdb_exec("test: help", args, 1, 0);
 
         args = "version";
-        Util.sdb_exec_verify("test version", args, 0, "version", 0);
+        Util.sdb_exec_verify("test: version", args, 0, "version", 0);
     }
 }
 
@@ -40,53 +40,166 @@ class sdb_server{
         println ("   TC:");
 
         args = "kill-server";
-        Util.sdb_exec("test kill-server", args, 0, 0);
+        Util.sdb_exec("test: kill-server", args, 0, 0);
 
         args = "start-server";
-        Util.sdb_exec("test start-server", args, 0, 0);
+        Util.sdb_exec("test: start-server", args, 0, 0);
     }
 }
 
 class sdb_state{
 
-    public static void test(){
+    public static void test(String serial){
         String args = "";
 
-        println("SDB test with device");
+        println("state test");
         println ("   TC:");
 
         args = "get-serialno";
-        Util.sdb_exec("get-serialno", args, 0, 0);
+        Util.sdb_exec("test: get-serialno", args, 0, 0);
 
         args = "get-state";
-        Util.sdb_exec("get-state", args, 0, 0);
+        Util.sdb_exec("test: get-state", args, 0, 0);
 
-        args = "get-state";
-        Util.sdb_exec_verify("test get-state with return string", args, 0, "device", 0);
+        if(serial == null){
+            println ("       Skip test get-state with return string");
+        }else{
+            args = "devices";
+            Util.sdb_exec_verify("test: devices for checking ${serial}", args, 0, "${serial}", 0);
+            Util.sdb_exec_verify("test: devices for checking 'device' ", args, 0, "device", 0);
 
+            args = "-s ${serial} get-state";
+            Util.sdb_exec_verify("test: get-state with return string", args, 0, "device", 0);
+
+            args = "-s ${serial} get-serialno";
+            Util.sdb_exec_verify("test: get-serialno for checking ${serial}", args, 0, "${serial}", 0);
+        }
+    }
+}
+
+class sdb_connect{
+
+    public static void test(String serial){
+        String args = "";
+
+        println("SDB test connection");
+        println ("   TC:");
+
+        if(serial == null){
+            println ("       Skip test");
+        }else{
+            args = "-s ${serial} forward tcp:7777 tcp:26101";
+            Util.sdb_exec("test: forward", args, 0, 0);
+
+            // scenario #1
+            args = "-s ${serial} connect localhost:7777";
+            Util.sdb_exec("test: connect", args, 0, 0);
+
+            args = "-s localhost:7777 get-serialno";
+            Util.sdb_exec_verify("test: get-serialno for checking localhost:7777", args, 0, "localhost:7777", 0);
+
+            args = "-s ${serial} disconnect localhost:7777";
+            Util.sdb_exec("test: disconnect", args, 0, 0);
+
+            // scenario #2
+            args = "-s ${serial} connect localhost:7777";
+            Util.sdb_exec("test: connect", args, 0, 0);
+            args = "-s ${serial} connect localhost:7777";
+            Util.sdb_exec_verify("test: re-connect", args, 0, "localhost:7777 is already connected", 0);
+
+            args = "-s ${serial} disconnect localhost:7777";
+            Util.sdb_exec("test: disconnect", args, 0, 0);
+        }
+    }
+}
+
+class sdb_shell{
+
+    public static void test(String serial){
+        String args = "";
+
+        println("shell test");
+        println ("   TC:");
+
+        if(serial == null){
+            println ("       Skip test");
+        }else{
+            args = "-s ${serial} shell whoami";
+            Util.sdb_exec_verify("test: shell whoami", args, 0, "developer", 0);
+        }
+    }
+}
+
+class sdb_install{
+
+    public static void test(String serial){
+        String args = "";
+
+        println("install test");
+        println ("   TC:");
+
+        if(serial == null){
+            println ("       Skip test");
+        }else{
+            println ("       Todo test");
+        }
+    }
+}
+
+class sdb_push{
+
+    public static void test(String serial){
+        String args = "";
+
+        println("push test");
+        println ("   TC:");
+
+        if(serial == null){
+            println ("       Skip test");
+        }else{
+            println ("       Todo test");
+        }
+    }
+}
+class sdb_pull {
+
+    public static void test(String serial){
+        String args = "";
+
+        println("pull test");
+        println ("   TC:");
+
+        if(serial == null){
+            println ("       Skip test");
+        }else{
+            println ("       Todo test");
+        }
     }
 }
 
 class SDBTask extends DefaultTask {
     def test_name;
     def sdk_path;
+    def serial;
 
     @TaskAction
         def test() {
             println("=====================================");
             println("${test_name}");
             println("sdk path: ${sdk_path}");
+            println("serial number: ${serial}");
             println("-------------------------------------");
 
             Util.init(sdk_path);
 
-            // test with no emulator/device
             sdb_basic.test();
-            sdb_state.test();
+            sdb_state.test(serial);
+            sdb_connect.test(serial);
+            sdb_shell.test(serial);
+            sdb_install.test(serial);
+            sdb_push.test(serial);
+            sdb_pull.test(serial);
 
             sdb_server.test();
-
-            // test with just one emulator or device
         }
 }
-
