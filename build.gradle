@@ -38,3 +38,6 @@ task sdbTest(type: SDBTask) {
     sdk_path = "${sdk_install_path}";
     serial = "emulator-26101"
 }
+
+task allTest(dependsOn: [sdbTest, webTest, nativeTest]) {
+}

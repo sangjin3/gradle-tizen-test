@@ -101,6 +101,12 @@ class Util {
             }
         }
 
+        serr.eachLine { line, count ->
+            if ( line.contains("$OK_STR") ){
+                found = 1;
+            }
+        }
+
         exit = proc.exitValue();
         if( found && (exit == OK_EXIT_VALUE) ){
             println ("       Success: ${test}");

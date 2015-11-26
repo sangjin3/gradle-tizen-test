@@ -157,7 +157,8 @@ class sdb_push{
         if(serial == null){
             println ("       Skip test");
         }else{
-            println ("       Todo test");
+            args = "-s ${serial} push ${Util.pwd}/gradle/wrapper/gradle-wrapper.jar /home/developer";
+            Util.sdb_exec_verify("test: push", args, 0, "pushed", 0);
         }
     }
 }
@@ -172,7 +173,8 @@ class sdb_pull {
         if(serial == null){
             println ("       Skip test");
         }else{
-            println ("       Todo test");
+            args = "-s ${serial} pull /home/developer/gradle-wrapper.jar ${Util.pwd}";
+            Util.sdb_exec_verify("test: push", args, 0, "pulled", 0);
         }
     }
 }
