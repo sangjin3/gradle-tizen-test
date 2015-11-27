@@ -9,6 +9,7 @@ class Util {
     public static String sdk_path;
     public static String tizen_cmd;
     public static String sdb_cmd;
+    public static String em_cli_cmd;
     public static String pwd;
 
     public static void init(arg1){
@@ -28,9 +29,11 @@ class Util {
         if ( hostos  == "win" ) { 
             tizen_cmd = "${sdk_path}/tools/ide/bin/tizen.bat";
             sdb_cmd = "${sdk_path}/tools/sdb.exe";
+            em_cli_cmd = "${sdk_path}/tools/emulator/bin/em-cli.exe";
         }else{
             tizen_cmd = "${sdk_path}/tools/ide/bin/tizen";
             sdb_cmd = "${sdk_path}/tools/sdb";
+            em_cli_cmd = "${sdk_path}/tools/emulator/bin/em-cli";
         }   
 
         File tizen_file  = new File(tizen_cmd);
@@ -38,6 +41,9 @@ class Util {
 
         File sdb_file = new File(sdb_cmd);
         assert ( sdb_file.exists() );
+
+        File em_cli_file = new File(em_cli_cmd);
+        assert ( em_cli_file.exists() );
     }
 
     public static void tizen_exec(test, args, OK_EXIT_VALUE, verbose){
@@ -93,7 +99,7 @@ class Util {
         StringBuilder serr = new StringBuilder();
 
         def proc = command.split().toList().execute();
-        proc.waitForProcessOutput(sout, serr)
+        proc.waitForProcessOutput(sout, serr);
 
         sout.eachLine { line, count ->
             if ( line.contains("$OK_STR") ){

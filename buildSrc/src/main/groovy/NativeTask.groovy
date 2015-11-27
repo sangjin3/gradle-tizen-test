@@ -73,8 +73,7 @@ class NativeTest {
         def profile = arg1;
 
         def proc = ["${Util.tizen_cmd}", "list", "native-project"].execute();
-        proc.consumeProcessOutput(sout, serr);
-        proc.waitFor();
+        proc.waitForProcessOutput(sout, serr);
 
         if( proc.exitValue() == 0 ){
             println ("Success: list");

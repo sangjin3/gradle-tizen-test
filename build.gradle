@@ -1,4 +1,9 @@
+
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: 'groovy'
+
 dependencies {
     compile gradleApi();
     compile localGroovy();
@@ -8,36 +13,57 @@ dependencies {
     testCompile 'junit:junit:4.12';
 }
 
-// for Windows
-//def sdk_install_path = "C:/tizen-sdk"
+// Global var. with default value
+def sdk_install_path = null;
+def device_profile= "mobile"
+def device_serial = "emulator-26101"
 
-// for Ubuntu, Mac
-def env = System.getenv();
-def myHome= env['HOME'];
-def sdk_install_path = "${myHome}/tizen-sdk";
+task setup() {
 
-task certTest(type: CertTask) {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        if (sdk_install_path == null){
+            sdk_install_path = "C:/tizen-sdk"
+        }
+    } else if (Os.isFamily(Os.FAMILY_MAC)) {
+        // Todo
+    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
+        if (sdk_install_path == null){
+            def env = System.getenv();
+            def myHome= env['HOME'];
+            sdk_install_path = "${myHome}/tizen-sdk";
+        }
+    }  
+}
+
+task sdbTest(type: SDBTask, dependsOn: [setup]) {
+    test_name = 'tizen sdk sdb test';
+    sdk_path = "${sdk_install_path}";
+    serial = "${device_serial}"
+}
+
+task certTest(type: CertTask, dependsOn: [setup]) {
     test_name = 'tizen sdk cli test for certificate';
     sdk_path = "${sdk_install_path}";
 }
 
-task nativeTest(type: NativeTask, dependsOn: certTest) {
+task nativeTest(type: NativeTask, dependsOn: [setup, certTest]) {
     test_name = 'tizen sdk cli test for native app';
     sdk_path = "${sdk_install_path}";
-    profile = "mobile";
+    profile = "${device_profile}";
 }
 
-task webTest(type: WebTask, dependsOn: certTest) {
+task webTest(type: WebTask, dependsOn: [setup, certTest]) {
     test_name = 'tizen sdk cli test for web app';
     sdk_path = "${sdk_install_path}";
-    profile = "mobile";
+    profile = "${device_profile}";
 }
 
-task sdbTest(type: SDBTask) {
-    test_name = 'tizen sdk sdb test';
+task installTest(type: InstallTask, dependsOn: [setup]) {
+    test_name = 'tizen sdk install test with em-cli';
     sdk_path = "${sdk_install_path}";
-    serial = "emulator-26101"
+    profile = "${device_profile}";
+    serial = "${device_serial}"
 }
 
-task allTest(dependsOn: [sdbTest, webTest, nativeTest]) {
+task allTest(dependsOn: [setup, sdbTest, webTest, nativeTest]) {
 }
