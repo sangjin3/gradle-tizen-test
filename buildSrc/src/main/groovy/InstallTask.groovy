@@ -5,40 +5,48 @@ import static groovy.io.FileType.FILES
 
 import Util
 
-class image {
-    private String Platform;
-    private String Profile;
-    private String Version;
+class vm {
+    private String profile;
+    private String version;
+    private String name;
 
-    image(arg1, arg2, arg3){
-        Platform = arg1; Profile = arg2; Version = arg3;
+    vm(arg1, arg2, arg3){
+        profile = arg1; version = arg2; name = arg3;
+        println ("VM created with name($name): $profile $version ");
     }
 }
 
 class VmTest {
-    public static ArrayList<image> ImageList;
+    public static ArrayList<vm> vmList;
 
-    public static void listTest(arg1) {
-        def Platform;
+    public static void createVM(arg1) {
+        def profile = arg1;
+        def version;
+        def proc;
         def sout = new StringBuilder();
         def serr = new StringBuilder();
-        ImageList = new ArrayList<image>();
-        def profile = arg1;
+        vmList = new ArrayList<vm>();
 
-        def proc = ["${Util.em_cli_cmd}", "list-image"]. execute();
-        proc.waitForProcessOutput(sout, serr);
+        ['2_3_1', '2_4', '3_0'].each { name ->
 
-        if( proc.exitValue() == 0 ){
-            println ("Success: list");
-        }else{
-            println ("Fail   : list");
-            println ("$sout"); println ("$serr");
-        }
+            version = name.replaceAll('_','.');
 
-        sout.eachLine { line, count ->
-            println ("$line");
-            //if ( line.contains("${profile}") ){
-            //}
+            proc = ["${Util.em_cli_cmd}", "delete", "--name", "${profile}_${name}"].execute();
+            proc.consumeProcessOutput(sout, serr);
+            proc.waitFor();
+            sout.delete(0, sout.length()); serr.delete(0, serr.length());
+
+            proc = ["${Util.em_cli_cmd}", "create", "--platform", "${profile}-${version}", "--name", "${profile}_${name}"].execute();
+            proc.consumeProcessOutput(sout, serr);
+            proc.waitFor();
+
+            if( proc.exitValue() == 0 ){
+                def tmp  = new vm(profile, version, "${profile}_${name}");
+                vmList.add(tmp);
+            }else{
+                println ("$sout"); println ("$serr");
+            }
+            sout.delete(0, sout.length()); serr.delete(0, serr.length());
         }
     }
 }
@@ -51,9 +59,6 @@ class InstallTask extends DefaultTask {
 
     @TaskAction
         def test() {
-            int i = 0;
-            int total = 0;
-
             println("=====================================");
             println("${test_name}");
             println("sdk path: ${sdk_path}");
@@ -63,9 +68,7 @@ class InstallTask extends DefaultTask {
 
             Util.init(sdk_path);
 
-            VmTest.listTest(profile);
-
-            //println("Total template number: " + total);
+            VmTest.createVM(profile);
         }
 }
 
