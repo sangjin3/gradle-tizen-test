@@ -58,6 +58,23 @@ class NativeApp {
             println ("       Fail: ${it.name}");
         }
     }
+
+    def install(serial, arch, compiler, configuration){
+
+        new File("${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}").eachFileRecurse(FILES) {
+            if( it.name.endsWith('.tpk') ){
+
+                def args = "install ";
+                args += "--name ${it.name} ";
+                args += "--target ${serial} ";
+                args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
+                Util.tizen_exec("install", args, 0, 0);
+
+            }else if( it.name.endsWith('.so') ||  it.name.endsWith('.a') ){
+                println ("       Skip: $it.name");
+            }
+        }
+    }
 }
 
 class NativeTest {
@@ -70,7 +87,7 @@ class NativeTest {
         def sout = new StringBuilder();
         def serr = new StringBuilder();
         AppList = new ArrayList<NativeApp>();
-        def profile = arg1;
+        def platform = arg1;
 
         def proc = ["${Util.tizen_cmd}", "list", "native-project"].execute();
         proc.waitForProcessOutput(sout, serr);
@@ -83,7 +100,7 @@ class NativeTest {
         }
 
         sout.eachLine { line, count ->
-            if ( line.contains("${profile}") ){
+            if ( line.contains("${platform}") ){
                 String[] splited = line.split("\\s+");
                 Platform = splited[0];
                 Template = splited[1];
@@ -100,7 +117,7 @@ class NativeTest {
 class NativeTask extends DefaultTask {
     def test_name;
     def sdk_path;
-    def profile;
+    def platform;
 
     @TaskAction
         def test() {
@@ -109,13 +126,13 @@ class NativeTask extends DefaultTask {
 
             println("=====================================");
             println("${test_name}");
-            println("profile: ${profile}");
+            println("platform: ${platform}");
             println("sdk path: ${sdk_path}");
             println("-------------------------------------");
 
             Util.init(sdk_path);
 
-            NativeTest.listTest(profile);
+            NativeTest.listTest(platform);
 
             i = 0;
             NativeTest.AppList.each {

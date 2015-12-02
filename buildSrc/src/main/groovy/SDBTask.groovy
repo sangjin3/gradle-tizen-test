@@ -182,6 +182,7 @@ class sdb_pull {
 class SDBTask extends DefaultTask {
     def test_name;
     def sdk_path;
+    def platform;
     def serial;
 
     @TaskAction
@@ -189,6 +190,7 @@ class SDBTask extends DefaultTask {
             println("=====================================");
             println("${test_name}");
             println("sdk path: ${sdk_path}");
+            println("platform: ${platform}");
             println("serial number: ${serial}");
             println("-------------------------------------");
 

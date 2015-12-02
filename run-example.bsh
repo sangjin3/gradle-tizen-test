@@ -1,12 +1,16 @@
 #!/bin/bash
 
-# same as "./gradlew sT"
-./gradlew sdbTest
+# same as "./gradlew vT"
+./gradlew -q vmTest
 
-./gradlew certTest
+./gradlew -q certTest
 
-./gradlew webTest
+./gradlew -q nativeTest
+./gradlew -q installNativeTest
 
-./gradlew nativeTest
+./gradlew -q webTest
+./gradlew -q installWebTest
+
+./gradlew -q sdbTest
 
 exit 0

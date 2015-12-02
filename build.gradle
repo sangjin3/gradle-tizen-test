@@ -1,8 +1,15 @@
 
-
 import org.apache.tools.ant.taskdefs.condition.Os
-
 apply plugin: 'groovy'
+
+////////////////////////////////////////////////////
+// Global var. with default value
+def sdk_install_path = null;
+// mobile-2.3, mobile-2.3.1, mobile-2.4, wearable-2.3, wearable-2.3.1
+//def device_platform = "mobile-2.4"
+def device_platform = "wearable-2.3.1"
+def device_serial = "emulator-26101"
+////////////////////////////////////////////////////
 
 dependencies {
     compile gradleApi();
@@ -12,11 +19,6 @@ dependencies {
 dependencies {
     testCompile 'junit:junit:4.12';
 }
-
-// Global var. with default value
-def sdk_install_path = null;
-def device_profile= "mobile"
-def device_serial = "emulator-26101"
 
 task setup() {
 
@@ -35,35 +37,47 @@ task setup() {
     }  
 }
 
-task sdbTest(type: SDBTask, dependsOn: [setup]) {
-    test_name = 'tizen sdk sdb test';
+task vmTest(type: VMTask, dependsOn: [setup]) {
+    test_name = 'create VM for testing';
     sdk_path = "${sdk_install_path}";
+    platform = "${device_platform}";
+}
+
+task sdbTest(type: SDBTask, dependsOn: [setup]) {
+    test_name = 'sdb test';
+    sdk_path = "${sdk_install_path}";
+    platform = "${device_platform}";
     serial = "${device_serial}"
 }
 
 task certTest(type: CertTask, dependsOn: [setup]) {
-    test_name = 'tizen sdk cli test for certificate';
+    test_name = 'cli test for certificate';
     sdk_path = "${sdk_install_path}";
 }
 
 task nativeTest(type: NativeTask, dependsOn: [setup, certTest]) {
-    test_name = 'tizen sdk cli test for native app';
+    test_name = 'create/build/package test with native app ';
     sdk_path = "${sdk_install_path}";
-    profile = "${device_profile}";
+    platform = "${device_platform}";
 }
 
 task webTest(type: WebTask, dependsOn: [setup, certTest]) {
-    test_name = 'tizen sdk cli test for web app';
+    test_name = 'create/build/package test with web app ';
     sdk_path = "${sdk_install_path}";
-    profile = "${device_profile}";
+    platform = "${device_platform}";
 }
 
-task installTest(type: InstallTask, dependsOn: [setup]) {
-    test_name = 'tizen sdk install test with em-cli';
+task installNativeTest(type: InstallNativeTask, dependsOn: [setup]) {
+    test_name = 'install test with native app ';
     sdk_path = "${sdk_install_path}";
-    profile = "${device_profile}";
+    platform = "${device_platform}";
     serial = "${device_serial}"
 }
 
-task allTest(dependsOn: [setup, sdbTest, webTest, nativeTest]) {
+task installWebTest(type: InstallWebTask, dependsOn: [setup]) {
+    test_name = 'install test with web app ';
+    sdk_path = "${sdk_install_path}";
+    platform = "${device_platform}";
+    serial = "${device_serial}"
 }
+

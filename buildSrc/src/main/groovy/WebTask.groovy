@@ -50,6 +50,19 @@ class WebApp {
             println ("       Fail: ${Name}.wgt");
         }
     }
+
+    def install(serial){
+
+        new File("${Util.pwd}/out/${Platform}/${Name}").eachFileRecurse(FILES) {
+            if( it.name.endsWith('.wgt') ){
+                def args = "install ";
+                args += "--name ${it.name} ";
+                args += "--target ${serial} ";
+                args += "-- ${Util.pwd}/out/${Platform}/${Name}/.buildResult";
+                Util.tizen_exec("install", args, 0, 0);
+            }
+        }
+    }
 }
 
 class WebTest {
@@ -62,7 +75,7 @@ class WebTest {
         def sout = new StringBuilder();
         def serr = new StringBuilder();
         AppList = new ArrayList<WebApp>();
-        def profile = arg1;
+        def platform = arg1;
 
         def proc = ["${Util.tizen_cmd}", "list", "web-project"].execute();
         proc.waitForProcessOutput(sout, serr);
@@ -75,7 +88,7 @@ class WebTest {
         }
 
         sout.eachLine { line, count ->
-            if ( line.contains("${profile}") ){
+            if ( line.contains("${platform}") ){
                 String[] splited = line.split("\\s+");
                 Platform = splited[0];
                 Template = splited[1];
@@ -92,7 +105,7 @@ class WebTest {
 class WebTask extends DefaultTask {
     def test_name;
     def sdk_path;
-    def profile;
+    def platform;
 
     @TaskAction
         def test() {
@@ -101,13 +114,13 @@ class WebTask extends DefaultTask {
 
             println("=====================================");
             println("${test_name}");
-            println("profile: ${profile}");
+            println("platform: ${platform}");
             println("sdk path: ${sdk_path}");
             println("-------------------------------------");
 
             Util.init(sdk_path);
 
-            WebTest.listTest(profile);
+            WebTest.listTest(platform);
 
             i = 0;
             WebTest.AppList.each {
