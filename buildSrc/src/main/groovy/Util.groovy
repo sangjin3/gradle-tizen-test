@@ -29,7 +29,7 @@ class Util {
         if ( hostos  == "win" ) { 
             tizen_cmd = "${sdk_path}/tools/ide/bin/tizen.bat";
             sdb_cmd = "${sdk_path}/tools/sdb.exe";
-            em_cli_cmd = "${sdk_path}/tools/emulator/bin/em-cli.exe";
+            em_cli_cmd = "${sdk_path}/tools/emulator/bin/em-cli.bat";
         }else{
             tizen_cmd = "${sdk_path}/tools/ide/bin/tizen";
             sdb_cmd = "${sdk_path}/tools/sdb";
