@@ -73,7 +73,7 @@ task installNativeTest(type: InstallNativeTask, dependsOn: [setup]) {
     serial = "${device_serial}"
 }
 
-task reinstallNativeTest(type: ReinstallNativeTask, dependsOn: [setup]) {
+task reNativeTest(type: ReNativeTask, dependsOn: [setup]) {
     test_name = 'resign/install/clean test with native app ';
     sdk_path = "${sdk_install_path}";
     platform = "${device_platform}";
