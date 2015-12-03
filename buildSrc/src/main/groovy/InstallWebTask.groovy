@@ -28,7 +28,7 @@ class InstallWebTest {
         }
 
         sout.eachLine { line, count ->
-            if ( line.contains("${platform}") ){
+            if ( line.contains("${platform} ") ){
                 String[] splited = line.split("\\s+");
                 Platform = splited[0];
                 Template = splited[1];

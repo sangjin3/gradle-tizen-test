@@ -6,7 +6,7 @@ apply plugin: 'groovy'
 // Global var. with default value
 def sdk_install_path = null;
 // mobile-2.3, mobile-2.3.1, mobile-2.4, wearable-2.3, wearable-2.3.1
-def device_platform = "mobile-2.3"
+def device_platform = "wearable-2.3"
 def device_serial = "emulator-26101"
 ////////////////////////////////////////////////////
 
