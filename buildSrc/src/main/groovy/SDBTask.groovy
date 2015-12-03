@@ -130,22 +130,6 @@ class sdb_shell{
     }
 }
 
-class sdb_install{
-
-    public static void test(String serial){
-        String args = "";
-
-        println("install test");
-        println ("   TC:");
-
-        if(serial == null){
-            println ("       Skip test");
-        }else{
-            println ("       Todo test");
-        }
-    }
-}
-
 class sdb_push{
 
     public static void test(String serial){
@@ -200,7 +184,6 @@ class SDBTask extends DefaultTask {
             sdb_state.test(serial);
             sdb_connect.test(serial);
             sdb_shell.test(serial);
-            sdb_install.test(serial);
             sdb_push.test(serial);
             sdb_pull.test(serial);
 

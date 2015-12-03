@@ -62,14 +62,51 @@ class NativeApp {
     def install(serial, arch, compiler, configuration){
 
         new File("${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}").eachFileRecurse(FILES) {
-            if( it.name.endsWith('.tpk') ){
+            if( it.name.endsWith('.tpk') && it.name.contains('ui')){
+                def args;
 
-                def args = "install ";
+                XmlParser parser = new XmlParser();
+                def manifest = parser.parse( new File("${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/tizen-manifest.xml") );
+                def pkgid = manifest.'ui-application'.'@appid'.toString();
+                pkgid = pkgid.replaceAll('\\[','');
+                pkgid = pkgid.replaceAll('\\]','');
+
+                args = "install ";
                 args += "--name ${it.name} ";
                 args += "--target ${serial} ";
                 args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
-                Util.tizen_exec("install", args, 0, 0);
+                Util.tizen_exec("install ${Name}", args, 0, 0);
 
+                sleep(2000);
+
+                args = "run ";
+                args += "--pkgid ${pkgid} ";
+                args += "--target ${serial} ";
+                Util.tizen_exec("run ${Name}", args, 0, 0);
+
+                sleep(2000);
+
+                args = "uninstall ";
+                args += "--pkgid ${pkgid} ";
+                args += "--target ${serial} ";
+                Util.tizen_exec("uninstall ${Name}", args, 0, 0);
+
+                sleep(2000);
+
+            	args = "-s ${serial} ";
+                args += "install ";
+                args += "${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}/${it.name}";
+            	Util.sdb_exec("sdb install ${Name}", args, 0, 0);
+
+                sleep(2000);
+
+            	args = "-s ${serial} ";
+                args += "uninstall ";
+                args += "${pkgid} ";
+            	Util.sdb_exec("sdb uninstall ${Name}", args, 0, 0);
+
+            }else if( it.name.endsWith('.tpk') && it.name.contains('service')){
+                println ("       Skip: $it.name");
             }else if( it.name.endsWith('.so') ||  it.name.endsWith('.a') ){
                 println ("       Skip: $it.name");
             }

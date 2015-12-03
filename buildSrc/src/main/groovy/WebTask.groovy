@@ -55,14 +55,7 @@ class WebApp {
 
         new File("${Util.pwd}/out/${Platform}/${Name}").eachFileRecurse(FILES) {
             if( it.name.endsWith('.wgt') ){
-
-                def args = "install ";
-                args += "--name ${it.name} ";
-                args += "--target ${serial} ";
-                args += "-- ${Util.pwd}/out/${Platform}/${Name}/.buildResult";
-                Util.tizen_exec("install", args, 0, 0);
-
-                sleep(2000);
+                def args;
 
                 XmlParser parser = new XmlParser();
                 def widget = parser.parse( new File("${Util.pwd}/out/${Platform}/${Name}/config.xml") );
@@ -70,17 +63,39 @@ class WebApp {
                 pkgid = pkgid.replaceAll('\\[','');
                 pkgid = pkgid.replaceAll('\\]','');
 
+                args = "install ";
+                args += "--name ${it.name} ";
+                args += "--target ${serial} ";
+                args += "-- ${Util.pwd}/out/${Platform}/${Name}/.buildResult";
+                Util.tizen_exec("install ${Name}", args, 0, 0);
+
+                sleep(2000);
+
                 args = "run ";
                 args += "--pkgid ${pkgid} ";
                 args += "--target ${serial} ";
-                Util.tizen_exec("run", args, 0, 0);
+                Util.tizen_exec("run ${Name}", args, 0, 0);
 
                 sleep(2000);
 
                 args = "uninstall ";
                 args += "--pkgid ${pkgid} ";
                 args += "--target ${serial} ";
-                Util.tizen_exec("uninstall", args, 0, 0);
+                Util.tizen_exec("uninstall ${Name}", args, 0, 0);
+
+                sleep(2000);
+
+            	args = "-s ${serial} ";
+                args += "install ";
+                args += "${Util.pwd}/out/${Platform}/${Name}/.buildResult/${it.name}";
+            	Util.sdb_exec("sdb install ${Name}", args, 0, 0);
+
+                sleep(2000);
+
+            	args = "-s ${serial} ";
+                args += "uninstall ";
+                args += "${pkgid} ";
+            	Util.sdb_exec("sdb uninstall ${Name}", args, 0, 0);
             }
         }
     }
