@@ -7,7 +7,7 @@
 
 ./gradlew -q nativeTest
 ./gradlew -q installNativeTest
-./gradlew -q reinstallNativeTest
+./gradlew -q reNativeTest
 
 ./gradlew -q webTest
 ./gradlew -q installWebTest
