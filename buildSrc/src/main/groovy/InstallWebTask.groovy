@@ -68,7 +68,7 @@ class InstallWebTask extends DefaultTask {
             InstallWebTest.AppList.each {
                 println(++i + " " + it.Name );
                 println ("   TC Path: [${Util.pwd}/out/$it.Platform]");
-                it.install(serial);
+                it.installTest(serial);
             }
         }
 }

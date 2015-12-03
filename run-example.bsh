@@ -7,9 +7,12 @@
 
 ./gradlew -q nativeTest
 ./gradlew -q installNativeTest
+./gradlew -q reinstallNativeTest
 
 ./gradlew -q webTest
 ./gradlew -q installWebTest
+
+
 
 ./gradlew -q sdbTest
 

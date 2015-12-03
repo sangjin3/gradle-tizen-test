@@ -6,7 +6,7 @@ apply plugin: 'groovy'
 // Global var. with default value
 def sdk_install_path = null;
 // mobile-2.3, mobile-2.3.1, mobile-2.4, wearable-2.3, wearable-2.3.1
-def device_platform = "wearable-2.3"
+def device_platform = "mobile-2.4"
 def device_serial = "emulator-26101"
 ////////////////////////////////////////////////////
 
@@ -67,14 +67,21 @@ task webTest(type: WebTask, dependsOn: [setup, certTest]) {
 }
 
 task installNativeTest(type: InstallNativeTask, dependsOn: [setup]) {
-    test_name = 'install test with native app ';
+    test_name = 'install/run/uninstall test for native app by CLI/SDB';
+    sdk_path = "${sdk_install_path}";
+    platform = "${device_platform}";
+    serial = "${device_serial}"
+}
+
+task reinstallNativeTest(type: ReinstallNativeTask, dependsOn: [setup]) {
+    test_name = 'resign/install/clean test with native app ';
     sdk_path = "${sdk_install_path}";
     platform = "${device_platform}";
     serial = "${device_serial}"
 }
 
 task installWebTest(type: InstallWebTask, dependsOn: [setup]) {
-    test_name = 'install test with web app ';
+    test_name = 'install/run/uninstall test for web app by CLI/SDB';
     sdk_path = "${sdk_install_path}";
     platform = "${device_platform}";
     serial = "${device_serial}"

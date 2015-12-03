@@ -51,9 +51,10 @@ class WebApp {
         }
     }
 
-    def install(serial){
+    def installTest(serial){
 
-        new File("${Util.pwd}/out/${Platform}/${Name}").eachFileRecurse(FILES) {
+        new File("${Util.pwd}/out/${Platform}/${Name}/.buildResult").eachFile(FILES) {
+
             if( it.name.endsWith('.wgt') ){
                 def args;
 
@@ -69,28 +70,22 @@ class WebApp {
                 args += "-- ${Util.pwd}/out/${Platform}/${Name}/.buildResult";
                 Util.tizen_exec("install ${Name}", args, 0, 0);
 
-                sleep(2000);
-
                 args = "run ";
                 args += "--pkgid ${pkgid} ";
                 args += "--target ${serial} ";
                 Util.tizen_exec("run ${Name}", args, 0, 0);
 
-                sleep(2000);
+                sleep(1000);
 
                 args = "uninstall ";
                 args += "--pkgid ${pkgid} ";
                 args += "--target ${serial} ";
                 Util.tizen_exec("uninstall ${Name}", args, 0, 0);
 
-                sleep(2000);
-
             	args = "-s ${serial} ";
                 args += "install ";
                 args += "${Util.pwd}/out/${Platform}/${Name}/.buildResult/${it.name}";
             	Util.sdb_exec("sdb install ${Name}", args, 0, 0);
-
-                sleep(2000);
 
             	args = "-s ${serial} ";
                 args += "uninstall ";

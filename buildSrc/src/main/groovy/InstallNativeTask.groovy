@@ -71,7 +71,7 @@ class InstallNativeTask extends DefaultTask {
                     ['llvm'].each { compiler->
                         ['Debug'].each { configuration->
                             println ("   TC Path: [${Util.pwd}/out/${it.Platform}_${arch}_${compiler}_${configuration}]");
-                            it.install(serial, "${arch}","${compiler}","${configuration}");
+                            it.installTest(serial, "${arch}","${compiler}","${configuration}");
                         }
                     }
                 }
