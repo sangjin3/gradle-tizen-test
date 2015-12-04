@@ -21,6 +21,10 @@ dependencies {
 
 task setup() {
 
+    if( project.hasProperty("platform")) {
+        device_platform = "${platform}".toString();
+    }
+
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         if (sdk_install_path == null){
             sdk_install_path = "C:/tizen-sdk"

@@ -1,19 +1,26 @@
 #!/bin/bash
 
-# same as "./gradlew vT"
-./gradlew -q vmTest
+for arg in wearable-2.3 wearable-2.3.2 mobile-2.3
+do
+    ./gradlew -q -Pplatform=$arg vmTest
 
-./gradlew -q certTest
+    ./gradlew -q -Pplatform=$arg certTest
 
-./gradlew -q nativeTest
-./gradlew -q installNativeTest
-./gradlew -q reNativeTest
+    ./gradlew -q -Pplatform=$arg  nativeTest
+    ./gradlew -q -Pplatform=$arg  installNativeTest
+    ./gradlew -q -Pplatform=$arg  reNativeTest
 
-./gradlew -q webTest
-./gradlew -q installWebTest
+    ./gradlew -q -Pplatform=$arg  webTest
+    ./gradlew -q -Pplatform=$arg  installWebTest
 
+    ./gradlew -q -Pplatform=$arg  sdbTest
 
-
-./gradlew -q sdbTest
-
+    pkill -9 emulator-x86
+    sleep 2
+    pkill -9 emulator.sh
+    sleep 2
+    pkill -9 emulator
+    sleep 3
+done
 exit 0
+
