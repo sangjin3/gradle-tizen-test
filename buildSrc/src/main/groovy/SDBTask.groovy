@@ -178,7 +178,7 @@ class SDBTask extends DefaultTask {
             println("serial number: ${serial}");
             println("-------------------------------------");
 
-            Util.init(sdk_path);
+            Util.init(sdk_path, project.gradle.startParameter.taskNames);
 
             sdb_basic.test();
             sdb_state.test(serial);

@@ -72,7 +72,7 @@ class VMTask extends DefaultTask {
             println("platform: ${platform}");
             println("-------------------------------------");
 
-            Util.init(sdk_path);
+            Util.init(sdk_path, project.gradle.startParameter.taskNames);
 
             VmTest.createVM(platform);
         }

@@ -217,7 +217,7 @@ class NativeTask extends DefaultTask {
             println("sdk path: ${sdk_path}");
             println("-------------------------------------");
 
-            Util.init(sdk_path);
+            Util.init(sdk_path, project.gradle.startParameter.taskNames);
 
             NativeTest.listTest(platform);
 

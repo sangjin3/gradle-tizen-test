@@ -60,7 +60,7 @@ class InstallWebTask extends DefaultTask {
             println("serial: ${serial}");
             println("-------------------------------------");
 
-            Util.init(sdk_path);
+            Util.init(sdk_path, project.gradle.startParameter.taskNames);
 
             InstallWebTest.listTest(platform);
 

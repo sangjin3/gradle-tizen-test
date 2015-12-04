@@ -51,7 +51,7 @@ class CertTask extends DefaultTask {
             println("sdk path: ${sdk_path}");
             println("-------------------------------------");
 
-            Util.init(sdk_path);
+            Util.init(sdk_path, project.gradle.startParameter.taskNames);
             CliConfig.delete_default_security_profiles();
             Certificate.create();
             SecurityProfile.create();

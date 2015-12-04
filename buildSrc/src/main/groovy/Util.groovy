@@ -1,6 +1,7 @@
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.StartParameter
 import static groovy.io.FileType.FILES
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -11,9 +12,14 @@ class Util {
     public static String sdb_cmd;
     public static String em_cli_cmd;
     public static String pwd;
+    public static File file_log = null;
+    public static String task_name;
 
-    public static void init(arg1){
+    public static void init(arg1, arg2){
         sdk_path = arg1;
+        task_name = arg2;
+        task_name = task_name.replaceAll('\\[','');
+        task_name = task_name.replaceAll('\\]','');
 
         File dir = new File (".");
         pwd = dir.getCanonicalPath();
@@ -44,6 +50,28 @@ class Util {
 
         File em_cli_file = new File(em_cli_cmd);
         assert ( em_cli_file.exists() );
+
+        def date = new Date()
+            def formattedDate = date.format('yyyy-MM-dd-HH-mm-ss')
+
+            if ( file_log == null ){
+                file_log = new File("log/${task_name}_${formattedDate}.log");
+                if (file_log.getParentFile() != null) {
+                    file_log.getParentFile().mkdirs();
+                }
+                file_log.createNewFile();
+            }
+    }
+
+    public static void trace( test, int exit, StringBuilder sout, StringBuilder serr ){
+        file_log.append ("========================\n");
+        file_log.append ("${test} \n");
+        file_log.append ("exit code: ${exit} \n");
+        file_log.append ("stdout:---------------- \n");
+        file_log.append ("$sout \n");
+        file_log.append ("stderr:---------------- \n");
+        file_log.append ("$serr \n");
+        file_log.append ("----------------------- \n");
     }
 
     public static void tizen_exec(test, args, OK_EXIT_VALUE, verbose){
@@ -63,10 +91,10 @@ class Util {
                 println ("$sout"); println ("$serr");
             }
         }else{
-
             println ("       Fail   : ${test} with exit value: " + exit);
-            println ("stdout: $sout"); println (stderr: "$serr");
+            println ("stdout: $sout"); println ("stderr: $serr");
         }
+        trace(test, exit, sout, serr);
     }
 
     public static void sdb_exec(test, args, OK_EXIT_VALUE, verbose){
@@ -89,6 +117,7 @@ class Util {
             println ("       Fail   : ${test} with exit value: " + exit);
             println ("stdout: $sout"); println (stderr: "$serr");
         }
+        trace(test, exit, sout, serr);
     }
 
     public static void sdb_exec_verify(test, args, OK_EXIT_VALUE, OK_STR, verbose){
@@ -123,6 +152,8 @@ class Util {
             println ("       Fail   : ${test} with exit:" + exit + " found:" + found);
             println ("stdout: $sout"); println (stderr: "$serr");
         }
+
+        trace(test, exit, sout, serr);
     }
 }
 
