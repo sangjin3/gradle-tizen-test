@@ -12,7 +12,7 @@ class Util {
     public static String sdb_cmd;
     public static String em_cli_cmd;
     public static String pwd;
-    public static File file_log = null;
+    public static File trace_log = null;
     public static String task_name;
 
     public static void init(arg1, arg2){
@@ -51,27 +51,26 @@ class Util {
         File em_cli_file = new File(em_cli_cmd);
         assert ( em_cli_file.exists() );
 
-        def date = new Date()
-            def formattedDate = date.format('yyyy-MM-dd-HH-mm-ss')
-
-            if ( file_log == null ){
-                file_log = new File("log/${task_name}_${formattedDate}.log");
-                if (file_log.getParentFile() != null) {
-                    file_log.getParentFile().mkdirs();
-                }
-                file_log.createNewFile();
+        def date = new Date();
+        def formattedDate = date.format('yyyy-MM-dd-HH-mm-ss');
+        if ( trace_log == null ){
+            trace_log = new File("log/trace_${formattedDate}.log");
+            if (trace_log.getParentFile() != null) {
+                trace_log.getParentFile().mkdirs();
             }
+            trace_log.createNewFile();
+        }
     }
 
     public static void trace( test, int exit, StringBuilder sout, StringBuilder serr ){
-        file_log.append ("========================\n");
-        file_log.append ("${test} \n");
-        file_log.append ("exit code: ${exit} \n");
-        file_log.append ("stdout:---------------- \n");
-        file_log.append ("$sout \n");
-        file_log.append ("stderr:---------------- \n");
-        file_log.append ("$serr \n");
-        file_log.append ("----------------------- \n");
+        trace_log.append ("========================\n");
+        trace_log.append ("${test} \n");
+        trace_log.append ("exit code: ${exit} \n");
+        trace_log.append ("stdout:---------------- \n");
+        trace_log.append ("$sout \n");
+        trace_log.append ("stderr:---------------- \n");
+        trace_log.append ("$serr \n");
+        trace_log.append ("----------------------- \n");
     }
 
     public static void tizen_exec(test, args, OK_EXIT_VALUE, verbose){
