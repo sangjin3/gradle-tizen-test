@@ -7,6 +7,13 @@ import Util
 
 class Certificate{
     public static void create(){
+
+        File test_key = null;
+        test_key = new File("${Util.sdk_path}/tools/ide/conf-ncli/test_key.p12");
+        if ( test_key.exists() ){
+            test_key.delete();
+        }
+
         def args = "certificate ";
         args += "--alias test_alias ";
         args += "--password test_pwd ";

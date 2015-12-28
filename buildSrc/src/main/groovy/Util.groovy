@@ -73,7 +73,7 @@ class Util {
         trace_log.append ("----------------------- \n");
     }
 
-    public static void tizen_exec(test, args, OK_EXIT_VALUE, verbose){
+    public static int tizen_exec(test, args, OK_EXIT_VALUE, verbose){
         String command = "${tizen_cmd} ${args}";
         int exit;
         StringBuilder sout = new StringBuilder();
@@ -94,9 +94,10 @@ class Util {
             println ("stdout: $sout"); println ("stderr: $serr");
         }
         trace(test, exit, sout, serr);
+        return exit;
     }
 
-    public static void sdb_exec(test, args, OK_EXIT_VALUE, verbose){
+    public static int sdb_exec(test, args, OK_EXIT_VALUE, verbose){
         String command = "${sdb_cmd} ${args}";
         int exit;
         StringBuilder sout = new StringBuilder();
@@ -117,6 +118,7 @@ class Util {
             println ("stdout: $sout"); println (stderr: "$serr");
         }
         trace(test, exit, sout, serr);
+        return exit;
     }
 
     public static void sdb_exec_verify(test, args, OK_EXIT_VALUE, OK_STR, verbose){

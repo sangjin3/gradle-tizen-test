@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for arg in wearable-2.3 wearable-2.3.2 mobile-2.3
+#for arg in wearable-2.3.1 wearable-2.3.2 mobile-2.3 mobile-2.3.1 mobile-2.4
+for arg in mobile-2.4
 do
     ./gradlew -q -Pplatform=$arg vmTest
 
