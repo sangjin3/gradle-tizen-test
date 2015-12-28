@@ -51,10 +51,10 @@ class Util {
         File em_cli_file = new File(em_cli_cmd);
         assert ( em_cli_file.exists() );
 
-        def date = new Date();
-        def formattedDate = date.format('yyyy-MM-dd-HH-mm-ss');
+        //def date = new Date();
+        //def formattedDate = date.format('yyyy-MM-dd-HH-mm-ss');
         if ( trace_log == null ){
-            trace_log = new File("log/trace_${formattedDate}.log");
+            trace_log = new File("log/trace.log");
             if (trace_log.getParentFile() != null) {
                 trace_log.getParentFile().mkdirs();
             }

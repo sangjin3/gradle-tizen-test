@@ -45,11 +45,23 @@ class NativeApp {
     }
 
     def packageTest(arch, compiler, configuration){
-        def args = "package ";
-        args += "--type tpk "; 
-        args += "--sign test_alias ";
-        args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
-        Util.tizen_exec("package", args, 0, 0);
+        int skip = 0;
+
+        new File("${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}").eachFileRecurse(FILES) {
+            if( it.name.endsWith('.so') ||  it.name.endsWith('.a')){
+                skip = 1;
+            }
+        }
+
+        if ( skip == 0 ){
+            def args = "package ";
+            args += "--type tpk ";
+            args += "--sign test_alias ";
+            args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
+            Util.tizen_exec("package", args, 0, 0);
+        }else{
+            println ("       Skip: package for ${Name}");
+        }
     }
 
     def checkTpk(arch, compiler, configuration){
@@ -64,7 +76,7 @@ class NativeApp {
         }
 
         if (success == 0 ){
-            println ("       Fail: ${it.name}");
+            println ("       Fail: ${Name}");
         }
     }
 
@@ -106,9 +118,9 @@ class NativeApp {
                 Util.tizen_exec("uninstall ${Name}", args, 0, 0);
 
             }else if( it.name.endsWith('.tpk') && it.name.contains('service')){
-                println ("       Skip: $it.name");
+                println ("       Skip: package with resign $it.name");
             }else if( it.name.endsWith('.so') ||  it.name.endsWith('.a') ){
-                println ("       Skip: $it.name");
+                println ("       Skip: package with resign $it.name");
             }
         }
     }
