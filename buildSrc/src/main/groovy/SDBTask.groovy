@@ -42,6 +42,8 @@ class sdb_server{
         args = "kill-server";
         Util.sdb_exec("test: kill-server", args, 0, 0);
 
+        sleep(1000);
+
         args = "start-server";
         Util.sdb_exec("test: start-server", args, 0, 0);
     }
@@ -91,21 +93,31 @@ class sdb_connect{
             args = "-s ${serial} forward tcp:7777 tcp:26101";
             Util.sdb_exec("test: forward", args, 0, 0);
 
+            sleep(1000);
+
             // scenario #1
             args = "-s ${serial} connect localhost:7777";
             Util.sdb_exec("test: connect", args, 0, 0);
 
+            sleep(1000);
+
             args = "-s localhost:7777 get-serialno";
             Util.sdb_exec_verify("test: get-serialno for checking localhost:7777", args, 0, "localhost:7777", 0);
 
+            sleep(1000);
+
             args = "-s ${serial} disconnect localhost:7777";
             Util.sdb_exec("test: disconnect", args, 0, 0);
+
+            sleep(1000);
 
             // scenario #2
             args = "-s ${serial} connect localhost:7777";
             Util.sdb_exec("test: connect", args, 0, 0);
             args = "-s ${serial} connect localhost:7777";
             Util.sdb_exec_verify("test: re-connect", args, 0, "localhost:7777 is already connected", 0);
+
+            sleep(1000);
 
             args = "-s ${serial} disconnect localhost:7777";
             Util.sdb_exec("test: disconnect", args, 0, 0);
