@@ -1,20 +1,23 @@
 #!/bin/bash
 
-#for arg in wearable-2.3.1 wearable-2.3.2 mobile-2.3 mobile-2.3.1 mobile-2.4
+sdk_path=/home/dkyun77/tizen-sdk_24_rev4
+#sdk_path=/Users/
+
+#for arg in wearable-2.3.1 mobile-2.3 mobile-2.3.1 mobile-2.4
 for arg in mobile-2.4
 do
-    ./gradlew -q -Pplatform=$arg vmTest
+    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg vmTest
 
-    ./gradlew -q -Pplatform=$arg certTest
+    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg certTest
 
-    ./gradlew -q -Pplatform=$arg  nativeTest
-    ./gradlew -q -Pplatform=$arg  installNativeTest
-    ./gradlew -q -Pplatform=$arg  reNativeTest
+    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  nativeTest
+    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  installNativeTest
+    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  reNativeTest
 
-    ./gradlew -q -Pplatform=$arg  webTest
-    ./gradlew -q -Pplatform=$arg  installWebTest
+    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  webTest
+    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  installWebTest
 
-    ./gradlew -q -Pplatform=$arg  sdbTest
+    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  sdbTest
 
     pkill -9 emulator-x86
     sleep 2
