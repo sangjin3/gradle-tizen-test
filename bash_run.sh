@@ -1,10 +1,8 @@
 #!/bin/bash
 
-sdk_path=/home/dkyun77/tizen-sdk_24_rev4
-#sdk_path=/Users/
+sdk_path=/home/dkyun77/tizen-sdk_tizen_sdk
 
-#for arg in wearable-2.3.1 mobile-2.3 mobile-2.3.1 mobile-2.4
-for arg in mobile-2.4
+for arg in wearable-2.3.1 mobile-2.3 mobile-2.3.1 mobile-2.4
 do
     ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg vmTest
 

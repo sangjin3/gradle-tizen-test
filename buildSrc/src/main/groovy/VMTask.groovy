@@ -16,7 +16,6 @@ class vm {
 }
 
 class VmTest {
-    public static ArrayList<vm> vmList;
 
     public static void createVM(arg1) {
         def platform = arg1;
@@ -24,7 +23,6 @@ class VmTest {
         def name;
         def sout = new StringBuilder();
         def serr = new StringBuilder();
-        vmList = new ArrayList<vm>();
 
         name = platform.replaceAll('-','_');
         name = name.replaceAll('\\.','_');
@@ -41,10 +39,7 @@ class VmTest {
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
 
-        if( proc.exitValue() == 0 ){
-            def tmp  = new vm(platform, "${name}");
-            vmList.add(tmp);
-        }else{
+        if( proc.exitValue() != 0 ){
             println ("$sout"); println ("$serr");
         }
         sout.delete(0, sout.length()); serr.delete(0, serr.length());

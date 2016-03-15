@@ -5,8 +5,8 @@ apply plugin: 'groovy'
 ////////////////////////////////////////////////////
 // Global var. with default value
 def sdk_install_path = null;
-def device_platform = "mobile-2.4"
-def device_serial = "emulator-26101"
+def device_platform = null;
+def device_serial = null;
 ////////////////////////////////////////////////////
 
 dependencies {
@@ -20,6 +20,7 @@ dependencies {
 
 task setup() {
 
+    // Priority #1: apply arguments
     if( project.hasProperty("sdk_path")) {
         sdk_install_path = "${sdk_path}".toString();
     }
@@ -30,6 +31,7 @@ task setup() {
         device_serial = "${serial}".toString();
     }
 
+    // Priority #2: default values
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         if (sdk_install_path == null){
             sdk_install_path = "C:/tizen-sdk"
@@ -43,6 +45,14 @@ task setup() {
             sdk_install_path = "${myHome}/tizen-sdk";
         }
     }  
+
+    if (device_platform== null){
+        device_platform = "mobile-2.4"
+    }
+
+    if (device_serial == null){
+        device_serial = "emulator-26101"
+    }
 }
 
 task vmTest(type: VMTask, dependsOn: [setup]) {

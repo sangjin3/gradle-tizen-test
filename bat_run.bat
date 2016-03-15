@@ -1,6 +1,6 @@
 @echo on
 
-set sdk_path="C:/tizen-sdk_24_rev4"
+set sdk_path="C:/tizen-sdk_tizen_sdk"
 set var=mobile-2.4 mobile-2.3.1 mobile-2.3 wearable-2.3.1
 
 for %%i in (%var%) do (
