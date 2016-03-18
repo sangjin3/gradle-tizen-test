@@ -19,7 +19,7 @@ USAGE
 * Linux/Mac의 경우 아래 파일의 sdk_path 부분에 Tizen SDK의 설치 위치를 설정한다
  * bash_run.sh
 * Windows의 경우 아래 파일의 sdk_path 부분에 Tizen SDK의 설치 위치를 설정한다
- * bat_run.bat다
+ * bat_run.bat
   * 참고로 윈도우즈에서 테스틑 편하게 하기 위해서 standalone git-bash를 설치 후 사용한다
   * https://git-for-windows.github.io/
 
