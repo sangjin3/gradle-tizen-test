@@ -1,23 +1,24 @@
 @echo on
 
-set sdk_path="C:/tizen-sdk_tizen_sdk"
-set var=mobile-2.4 mobile-2.3.1 mobile-2.3 wearable-2.3.1
+set sdk_path="C:/tizen-studio-2.0"
+set var=mobile-3.0 wearable-3.0
+set arch=x86
 
 for %%i in (%var%) do (
 
-    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i vmTest
-    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i certTest
+for %%j in (%arch%) do (
+    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i -Parch=%%j vmTest
+    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i -Parch=%%j certTest
 
-    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i nativeTest
-    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i installNativeTest
-    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i reNativeTest
+    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i -Parch=%%j nativeTest
+    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i -Parch=%%j installNativeTest
+    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i -Parch=%%j reNativeTest
 
-    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i webTest
-    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i installWebTest
+    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i -Parch=%%j webTest
+    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i -Parch=%%j installWebTest
 
-    call gradlew.bat -q -Psdk_path=%sdk_path% -Pplatform=%%i sdbTest
-
-    taskkill /f /im "emulator-x86.exe"
-    taskkill /f /im "emulator-x86.exe"
+    taskkill /f /im "emulator-x86_64.exe"
+    taskkill /f /im "emulator-x86_64.exe"
     timeout /t 10
+)
 )

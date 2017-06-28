@@ -7,6 +7,7 @@ apply plugin: 'groovy'
 def sdk_install_path = null;
 def device_platform = null;
 def device_serial = null;
+def architecture = null;
 ////////////////////////////////////////////////////
 
 dependencies {
@@ -30,11 +31,14 @@ task setup() {
     if( project.hasProperty("serial")) {
         device_serial = "${serial}".toString();
     }
+    if( project.hasProperty("arch")) {
+        architecture = "${arch}".toString();
+    }
 
     // Priority #2: default values
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         if (sdk_install_path == null){
-            sdk_install_path = "C:/tizen-sdk"
+            sdk_install_path = "C:/tizen-studio"
         }
     } else if (Os.isFamily(Os.FAMILY_MAC)) {
         // Todo
@@ -42,16 +46,20 @@ task setup() {
         if (sdk_install_path == null){
             def env = System.getenv();
             def myHome= env['HOME'];
-            sdk_install_path = "${myHome}/tizen-sdk";
+            sdk_install_path = "${myHome}/tizen-studio";
         }
     }  
 
     if (device_platform== null){
-        device_platform = "mobile-2.4"
+        device_platform = "mobile-3.0"
     }
 
     if (device_serial == null){
         device_serial = "emulator-26101"
+    }
+
+    if (architecture == null) {
+        architecture = "x86"
     }
 }
 
@@ -59,6 +67,7 @@ task vmTest(type: VMTask, dependsOn: [setup]) {
     test_name = 'create VM for testing';
     sdk_path = "${sdk_install_path}";
     platform = "${device_platform}";
+    arch = "${architecture}";
 }
 
 task sdbTest(type: SDBTask, dependsOn: [setup]) {

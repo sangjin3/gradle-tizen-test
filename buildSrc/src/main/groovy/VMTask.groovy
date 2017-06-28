@@ -17,12 +17,18 @@ class vm {
 
 class VmTest {
 
-    public static void createVM(arg1) {
+    public static void createVM(arg1, arg2) {
         def platform = arg1;
         def proc;
         def name;
         def sout = new StringBuilder();
         def serr = new StringBuilder();
+        def vm_platform = arg1;
+
+        if( arg1.contains("wearable")){
+            vm_platform += "-circle";
+        }
+        vm_platform += "-" + arg2;
 
         name = platform.replaceAll('-','_');
         name = name.replaceAll('\\.','_');
@@ -35,7 +41,7 @@ class VmTest {
         }
         sout.delete(0, sout.length()); serr.delete(0, serr.length());
 
-        proc = ["${Util.em_cli_cmd}", "create", "--platform", "${platform}", "--name", "${name}"].execute();
+        proc = ["${Util.em_cli_cmd}", "create", "--platform", "${vm_platform}", "--name", "${name}"].execute();
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
 
@@ -58,6 +64,7 @@ class VMTask extends DefaultTask {
     def test_name;
     def sdk_path;
     def platform;
+    def arch;
 
     @TaskAction
         def test() {
@@ -65,11 +72,12 @@ class VMTask extends DefaultTask {
             println("${test_name}");
             println("sdk path: ${sdk_path}");
             println("platform: ${platform}");
+            println("architecture: ${arch}");
             println("-------------------------------------");
 
             Util.init(sdk_path, project.gradle.startParameter.taskNames);
 
-            VmTest.createVM(platform);
+            VmTest.createVM(platform, arch);
         }
 }
 

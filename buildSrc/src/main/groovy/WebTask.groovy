@@ -66,20 +66,20 @@ class WebApp {
 
                 args = "install ";
                 args += "--name ${it.name} ";
-                args += "--target ${serial} ";
+                args += "--serial ${serial} ";
                 args += "-- ${Util.pwd}/out/${Platform}/${Name}/.buildResult";
                 Util.tizen_exec("install ${Name}", args, 0, 0);
 
                 args = "run ";
                 args += "--pkgid ${pkgid} ";
-                args += "--target ${serial} ";
+                args += "--serial ${serial} ";
                 Util.tizen_exec("run ${Name}", args, 0, 0);
 
                 sleep(1000);
 
                 args = "uninstall ";
                 args += "--pkgid ${pkgid} ";
-                args += "--target ${serial} ";
+                args += "--serial ${serial} ";
                 Util.tizen_exec("uninstall ${Name}", args, 0, 0);
 
             	args = "-s ${serial} ";

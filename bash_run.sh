@@ -1,28 +1,29 @@
 #!/bin/bash
 
-sdk_path=/home/dkyun77/tizen-sdk_tizen_sdk
+sdk_path=/home/rla1957/work/tizen-studio-2.0
 
-for arg in wearable-2.3.1 mobile-2.3 mobile-2.3.1 mobile-2.4
+for arg in wearable-3.0 mobile-3.0
 do
-    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg vmTest
+    for arch in x86
+    do
+        ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg -Parch=$arch vmTest
 
-    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg certTest
+        ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg -Parch=$arch certTest
 
-    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  nativeTest
-    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  installNativeTest
-    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  reNativeTest
+        ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  -Parch=$arch nativeTest
+        ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  -Parch=$arch installNativeTest
+        ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  -Parch=$arch reNativeTest
 
-    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  webTest
-    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  installWebTest
+        ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  -Parch=$arch webTest
+        ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  -Parch=$arch installWebTest
 
-    ./gradlew -q -Psdk_path=$sdk_path -Pplatform=$arg  sdbTest
-
-    pkill -9 emulator-x86
-    sleep 2
-    pkill -9 emulator.sh
-    sleep 2
-    pkill -9 emulator
-    sleep 3
+        pkill -9 emulator-x86
+        sleep 2
+        pkill -9 emulator.sh
+        sleep 2
+        pkill -9 emulator
+        sleep 3
+    done
 done
 exit 0
 
