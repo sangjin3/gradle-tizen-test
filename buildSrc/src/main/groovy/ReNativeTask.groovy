@@ -21,10 +21,10 @@ class ReNativeTest {
         proc.waitForProcessOutput(sout, serr);
 
         if( proc.exitValue() == 0 ){
-            println ("Success: list");
+            Util.log ("Success: list");
         }else{
-            println ("Fail   : list");
-            println ("$sout"); println ("$serr");
+            Util.log ("Fail   : list");
+            Util.log ("$sout"); Util.log ("$serr");
         }
 
         sout.eachLine { line, count ->
@@ -53,31 +53,32 @@ class ReNativeTask extends DefaultTask {
             int i = 0;
             int total = 0;
 
-            println("=====================================");
-            println("${test_name}");
-            println("sdk path: ${sdk_path}");
-            println("platform: ${platform}");
-            println("serial: ${serial}");
-            println("-------------------------------------");
-
             Util.init(sdk_path, project.gradle.startParameter.taskNames);
+
+            Util.log("=====================================");
+            Util.log("${test_name}");
+            Util.log("sdk path: ${sdk_path}");
+            Util.log("platform: ${platform}");
+            Util.log("serial: ${serial}");
+            Util.log("-------------------------------------");
+
 
             ReNativeTest.listTest(platform);
 
             i = 0;
             ReNativeTest.AppList.each {
-                //println(++i + " " + it.Name );
+                //Util.log(++i + " " + it.Name );
                 ['x86'].each { arch ->
                     ['gcc'].each { compiler->
                         ['Release'].each { configuration->
-                            println ("   TC Path: [${Util.pwd}/out/${it.Platform}_${arch}_${compiler}_${configuration}]");
+                            Util.log ("  TC Path: [${Util.pwd}/out/${it.Platform}_${arch}_${compiler}_${configuration}]");
                             it.reinstallTest(serial, "${arch}","${compiler}","${configuration}");
                             it.cleanTest("${arch}","${compiler}","${configuration}");
                         }
                     }
                 }
                 total = i;
-                //println("Total template number: " + total);
+                //Util.log("Total template number: " + total);
             }
         }
 }

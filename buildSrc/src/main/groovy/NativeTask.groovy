@@ -60,7 +60,7 @@ class NativeApp {
             args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}";
             Util.tizen_exec("package", args, 0, 0);
         }else{
-            println ("       Skip: package for ${Name}");
+            Util.log ("    Skip: package for ${Name}");
         }
     }
 
@@ -70,13 +70,13 @@ class NativeApp {
         new File("${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}").eachFileRecurse(FILES) {
             if( it.name.endsWith('.so') ||  it.name.endsWith('.a')
                     ||  it.name.endsWith('.tpk') ){
-                println ("       Success: $it.name");
+                Util.log ("    Success: $it.name");
                 success = 1;
             }
         }
 
         if (success == 0 ){
-            println ("       Fail: ${Name}");
+            Util.log ("    Fail: ${Name}");
         }
     }
 
@@ -94,7 +94,7 @@ class NativeApp {
                 pkgid = pkgid.replaceAll('\\]','');
 
                 args = "package ";
-                args += "--type tpk "; 
+                args += "--type tpk ";
                 args += "--sign test_alias ";
                 args += "-- ${Util.pwd}/out/${Platform}_${arch}_${compiler}_${configuration}/${Name}/${configuration}/${it.name}";
                 Util.tizen_exec("package with resign", args, 0, 0);
@@ -118,9 +118,9 @@ class NativeApp {
                 Util.tizen_exec("uninstall ${Name}", args, 0, 0);
 
             }else if( it.name.endsWith('.tpk') && it.name.contains('service')){
-                println ("       Skip: package with resign $it.name");
+                Util.log ("    Skip: package with resign $it.name");
             }else if( it.name.endsWith('.so') ||  it.name.endsWith('.a') ){
-                println ("       Skip: package with resign $it.name");
+                Util.log ("    Skip: package with resign $it.name");
             }
         }
     }
@@ -167,9 +167,9 @@ class NativeApp {
                 Util.sdb_exec("sdb uninstall ${Name}", args, 0, 0);
 
             }else if( it.name.endsWith('.tpk') && it.name.contains('service')){
-                println ("       Skip: $it.name");
+                Util.log ("    Skip: $it.name");
             }else if( it.name.endsWith('.so') ||  it.name.endsWith('.a') ){
-                println ("       Skip: $it.name");
+                Util.log ("    Skip: $it.name");
             }
         }
     }
@@ -192,10 +192,10 @@ class NativeTest {
         proc.waitForProcessOutput(sout, serr);
 
         if( proc.exitValue() == 0 ){
-            println ("Success: list");
+            Util.log ("Success: list");
         }else{
-            println ("Fail   : list");
-            println ("$sout"); println ("$serr");
+            Util.log ("Fail   : list");
+            Util.log ("$sout"); Util.log ("$serr");
         }
 
         sout.eachLine { line, count ->
@@ -223,21 +223,22 @@ class NativeTask extends DefaultTask {
             int i = 0;
             int total = 0;
 
-            println("=====================================");
-            println("${test_name}");
-            println("platform: ${platform}");
-            println("sdk path: ${sdk_path}");
-            println("-------------------------------------");
-
             Util.init(sdk_path, project.gradle.startParameter.taskNames);
+
+            Util.log("=====================================");
+            Util.log("${test_name}");
+            Util.log("platform: ${platform}");
+            Util.log("sdk path: ${sdk_path}");
+            Util.log("-------------------------------------");
+
 
             NativeTest.listTest(platform);
 
             i = 0;
             NativeTest.AppList.each {
-                println(++i + " " + it.Name );
+                Util.log(++i + " " + it.Name );
                 /*
-                   println ("   TC: $it.Platform, $arch, $compiler, $configuration");
+                   Util.log ("  TC: $it.Platform, $arch, $compiler, $configuration");
                    it.createTest("x86","gcc","Debug");
                    it.buildTest("x86","gcc","Debug");
                    it.packageTest("x86","gcc","Debug");
@@ -247,7 +248,7 @@ class NativeTask extends DefaultTask {
                 ['x86', 'arm'].each { arch ->
                     ['gcc', 'llvm'].each { compiler->
                         ['Debug', 'Release'].each { configuration->
-                            println ("   TC Path: [${Util.pwd}/out/${it.Platform}_${arch}_${compiler}_${configuration}]");
+                            Util.log ("  TC Path: [${Util.pwd}/out/${it.Platform}_${arch}_${compiler}_${configuration}]");
                             it.createTest  ("${arch}","${compiler}","${configuration}");
                             it.buildTest   ("${arch}","${compiler}","${configuration}");
                             it.packageTest ("${arch}","${compiler}","${configuration}");
@@ -257,7 +258,7 @@ class NativeTask extends DefaultTask {
                 }
             }
             total = i;
-            //println("Total template number: " + total);
+            //Util.log("Total template number: " + total);
         }
 }
 

@@ -42,12 +42,13 @@ class CertTask extends DefaultTask {
 
     @TaskAction
         def test() {
-            println("=====================================");
-            println("${test_name}");
-            println("sdk path: ${sdk_path}");
-            println("-------------------------------------");
-
             Util.init(sdk_path, project.gradle.startParameter.taskNames);
+
+            Util.log("=====================================");
+            Util.log("${test_name}");
+            Util.log("sdk path: ${sdk_path}");
+            Util.log("-------------------------------------");
+
             CliConfig.delete_default_security_profiles();
             Certificate.create();
             SecurityProfile.create();

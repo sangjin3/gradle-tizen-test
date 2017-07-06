@@ -21,10 +21,10 @@ class InstallWebTest {
         proc.waitForProcessOutput(sout, serr);
 
         if( proc.exitValue() == 0 ){
-            println ("Success: list");
+            Util.log ("Success: list");
         }else{
-            println ("Fail   : list");
-            println ("$sout"); println ("$serr");
+            Util.log ("Fail   : list");
+            Util.log ("$sout"); Util.log ("$serr");
         }
 
         sout.eachLine { line, count ->
@@ -53,21 +53,22 @@ class InstallWebTask extends DefaultTask {
             int i = 0;
             int total = 0;
 
-            println("=====================================");
-            println("${test_name}");
-            println("sdk path: ${sdk_path}");
-            println("platform: ${platform}");
-            println("serial: ${serial}");
-            println("-------------------------------------");
-
             Util.init(sdk_path, project.gradle.startParameter.taskNames);
+
+            Util.log("=====================================");
+            Util.log("${test_name}");
+            Util.log("sdk path: ${sdk_path}");
+            Util.log("platform: ${platform}");
+            Util.log("serial: ${serial}");
+            Util.log("-------------------------------------");
+
 
             InstallWebTest.listTest(platform);
 
             i = 0;
             InstallWebTest.AppList.each {
-                println(++i + " " + it.Name );
-                println ("   TC Path: [${Util.pwd}/out/$it.Platform]");
+                Util.log(++i + " " + it.Name );
+                Util.log ("  TC Path: [${Util.pwd}/out/$it.Platform]");
                 it.installTest(serial);
             }
         }

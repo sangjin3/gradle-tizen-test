@@ -10,8 +10,8 @@ class sdb_basic{
     public static void test(){
         String args = "";
 
-        println("Basic test");
-        println ("   TC:");
+        Util.log("Basic test");
+        Util.log ("  TC:");
 
         args = "";
         Util.sdb_exec("test: no arguments", args, 1, 0);
@@ -36,8 +36,8 @@ class sdb_server{
     public static void test(){
         String args = "";
 
-        println("SDB server test");
-        println ("   TC:");
+        Util.log("SDB server test");
+        Util.log ("  TC:");
 
         args = "kill-server";
         Util.sdb_exec("test: kill-server", args, 0, 0);
@@ -54,8 +54,8 @@ class sdb_state{
     public static void test(String serial){
         String args = "";
 
-        println("state test");
-        println ("   TC:");
+        Util.log("state test");
+        Util.log ("  TC:");
 
         args = "get-serialno";
         Util.sdb_exec("test: get-serialno", args, 0, 0);
@@ -64,7 +64,7 @@ class sdb_state{
         Util.sdb_exec("test: get-state", args, 0, 0);
 
         if(serial == null){
-            println ("       Skip test get-state with return string");
+            Util.log ("       Skip test get-state with return string");
         }else{
             args = "devices";
             Util.sdb_exec_verify("test: devices for checking ${serial}", args, 0, "${serial}", 0);
@@ -84,11 +84,11 @@ class sdb_connect{
     public static void test(String serial){
         String args = "";
 
-        println("SDB test connection");
-        println ("   TC:");
+        Util.log("SDB test connection");
+        Util.log ("  TC:");
 
         if(serial == null){
-            println ("       Skip test");
+            Util.log ("       Skip test");
         }else{
             args = "-s ${serial} forward tcp:7777 tcp:26101";
             Util.sdb_exec("test: forward", args, 0, 0);
@@ -130,11 +130,11 @@ class sdb_shell{
     public static void test(String serial){
         String args = "";
 
-        println("shell test");
-        println ("   TC:");
+        Util.log("shell test");
+        Util.log ("  TC:");
 
         if(serial == null){
-            println ("       Skip test");
+            Util.log ("       Skip test");
         }else{
             args = "-s ${serial} shell whoami";
             Util.sdb_exec_verify("test: shell whoami", args, 0, "developer", 0);
@@ -147,11 +147,11 @@ class sdb_push{
     public static void test(String serial){
         String args = "";
 
-        println("push test");
-        println ("   TC:");
+        Util.log("push test");
+        Util.log ("  TC:");
 
         if(serial == null){
-            println ("       Skip test");
+            Util.log ("       Skip test");
         }else{
             args = "-s ${serial} push ${Util.pwd}/gradle/wrapper/gradle-wrapper.jar /home/developer";
             Util.sdb_exec_verify("test: push", args, 0, "pushed", 0);
@@ -163,11 +163,11 @@ class sdb_pull {
     public static void test(String serial){
         String args = "";
 
-        println("pull test");
-        println ("   TC:");
+        Util.log("pull test");
+        Util.log ("  TC:");
 
         if(serial == null){
-            println ("       Skip test");
+            Util.log ("       Skip test");
         }else{
             args = "-s ${serial} pull /home/developer/gradle-wrapper.jar ${Util.pwd}";
             Util.sdb_exec_verify("test: push", args, 0, "pulled", 0);
@@ -183,14 +183,15 @@ class SDBTask extends DefaultTask {
 
     @TaskAction
         def test() {
-            println("=====================================");
-            println("${test_name}");
-            println("sdk path: ${sdk_path}");
-            println("platform: ${platform}");
-            println("serial number: ${serial}");
-            println("-------------------------------------");
-
             Util.init(sdk_path, project.gradle.startParameter.taskNames);
+
+            Util.log("=====================================");
+            Util.log("${test_name}");
+            Util.log("sdk path: ${sdk_path}");
+            Util.log("platform: ${platform}");
+            Util.log("serial number: ${serial}");
+            Util.log("-------------------------------------");
+
 
             sdb_basic.test();
             sdb_state.test(serial);

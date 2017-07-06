@@ -1,8 +1,8 @@
 #!/bin/bash
 
-sdk_path=/home/rla1957/work/tizen-studio-2.0
+sdk_path=/home/rla1957/sdk/tizen-studio-2.0
 
-for arg in wearable-3.0 mobile-3.0
+for arg in mobile-3.0 mobile-4.0 wearable-3.0
 do
     for arch in x86
     do

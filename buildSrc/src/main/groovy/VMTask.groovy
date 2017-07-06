@@ -11,7 +11,7 @@ class vm {
 
     vm(arg1, arg2){
         platform = arg1; name = arg2;
-        println ("VM created with name($name): $platform ");
+        Util.log ("VM created with name($name): $platform ");
     }
 }
 
@@ -37,26 +37,30 @@ class VmTest {
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
         if( proc.exitValue() != 0 ){
-            println ("$sout"); println ("$serr");
+            Util.log ("$sout");
+            Util.log ("$serr");
         }
-        sout.delete(0, sout.length()); serr.delete(0, serr.length());
+        sout.delete(0, sout.length());
+        serr.delete(0, serr.length());
 
         proc = ["${Util.em_cli_cmd}", "create", "--platform", "${vm_platform}", "--name", "${name}"].execute();
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
 
         if( proc.exitValue() != 0 ){
-            println ("$sout"); println ("$serr");
+            Util.log ("$sout"); Util.log ("$serr");
         }
-        sout.delete(0, sout.length()); serr.delete(0, serr.length());
+        sout.delete(0, sout.length());
+        serr.delete(0, serr.length());
 
         proc = ["${Util.em_cli_cmd}", "launch", "--name", "${name}"].execute();
         proc.consumeProcessOutput(sout, serr);
         proc.waitFor();
         if( proc.exitValue() != 0 ){
-            println ("$sout"); println ("$serr");
+            Util.log ("$sout"); Util.log ("$serr");
         }
-        sout.delete(0, sout.length()); serr.delete(0, serr.length());
+        sout.delete(0, sout.length());
+        serr.delete(0, serr.length());
     }
 }
 
@@ -68,14 +72,14 @@ class VMTask extends DefaultTask {
 
     @TaskAction
         def test() {
-            println("=====================================");
-            println("${test_name}");
-            println("sdk path: ${sdk_path}");
-            println("platform: ${platform}");
-            println("architecture: ${arch}");
-            println("-------------------------------------");
-
             Util.init(sdk_path, project.gradle.startParameter.taskNames);
+
+            Util.log("=====================================");
+            Util.log("${test_name}");
+            Util.log("sdk path: ${sdk_path}");
+            Util.log("platform: ${platform}");
+            Util.log("architecture: ${arch}");
+            Util.log("-------------------------------------");
 
             VmTest.createVM(platform, arch);
         }

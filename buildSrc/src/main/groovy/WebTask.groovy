@@ -42,12 +42,12 @@ class WebApp {
 
         new File("${Util.pwd}/out/${Platform}/${Name}").eachFileRecurse(FILES) {
             if( it.name.endsWith('.wgt') ){
-                println ("       Success: ${Name}.wgt");
+                Util.log ("    Success: ${Name}.wgt");
                 success = 1;
             }
         }
         if (success == 0 ){
-            println ("       Fail: ${Name}.wgt");
+            Util.log ("    Fail: ${Name}.wgt");
         }
     }
 
@@ -112,10 +112,10 @@ class WebTest {
         proc.waitForProcessOutput(sout, serr);
 
         if( proc.exitValue() == 0 ){
-            println ("Success: list");
+            Util.log ("Success: list");
         }else{
-            println ("Fail   : list");
-            println ("$sout"); println ("$serr");
+            Util.log ("Fail   : list");
+            Util.log ("$sout"); Util.log ("$serr");
         }
 
         sout.eachLine { line, count ->
@@ -143,27 +143,28 @@ class WebTask extends DefaultTask {
             int i = 0;
             int total = 0;
 
-            println("=====================================");
-            println("${test_name}");
-            println("platform: ${platform}");
-            println("sdk path: ${sdk_path}");
-            println("-------------------------------------");
-
             Util.init(sdk_path, project.gradle.startParameter.taskNames);
+
+            Util.log("=====================================");
+            Util.log("${test_name}");
+            Util.log("platform: ${platform}");
+            Util.log("sdk path: ${sdk_path}");
+            Util.log("-------------------------------------");
+
 
             WebTest.listTest(platform);
 
             i = 0;
             WebTest.AppList.each {
-                println(++i + " " + it.Name );
-                println ("   TC Path: [${Util.pwd}/out/$it.Platform]");
+                Util.log(++i + " " + it.Name );
+                Util.log ("  TC Path: [${Util.pwd}/out/$it.Platform]");
                 it.createTest();
                 it.buildTest();
                 it.packageTest();
                 it.checkWgt();
             }
             total = i;
-            //println("Total template number: " + total);
+            //Util.log("Total template number: " + total);
         }
 }
 
